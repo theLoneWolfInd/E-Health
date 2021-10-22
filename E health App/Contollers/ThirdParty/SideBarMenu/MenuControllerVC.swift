@@ -288,6 +288,8 @@ class MenuControllerVC: UIViewController {
                 
                 self.lblPhoneNumber.text = (person["contactNumber"] as! String)
                 self.lblPhoneNumber.textColor = .black
+                self.lblPhoneNumber.textColor = .black
+                self.lblPhoneNumber.textColor = .black
                 
                 self.imgSidebarMenuImage.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
                 self.imgSidebarMenuImage.sd_setImage(with: URL(string: (person["image"] as! String)), placeholderImage: UIImage(named: "1024"))
