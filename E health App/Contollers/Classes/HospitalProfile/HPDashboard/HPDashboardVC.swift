@@ -11,6 +11,9 @@ import SDWebImage
 
 class HPDashboardVC: UIViewController {
     
+    let arr_all_data_get:NSMutableArray! = []
+    let arr_list_of_classified_photo:NSMutableArray! = []
+    
     @IBOutlet weak var viewNavigationBar:UIView!
     @IBOutlet weak var btnDashboardMenu:UIButton!
     @IBOutlet weak var btnCalendar:UIButton!
@@ -47,6 +50,8 @@ class HPDashboardVC: UIViewController {
         self.tablView.separatorColor = .clear
         
         self.menuOrBack()
+        
+        
     }
     
     @objc func btnCalendarClickMethod() {
@@ -105,7 +110,8 @@ class HPDashboardVC: UIViewController {
     
     @objc func btnCheckAppointmentsPress() {
         
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPAppointmentsVC") as? PPAppointmentsVC
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ReportsId") as? Reports
+        push!.hospital_status_check = "yes"
         self.navigationController?.pushViewController(push!, animated: true)
         
     }
@@ -131,6 +137,90 @@ class HPDashboardVC: UIViewController {
         
     }
 
+    
+    @objc func test() {
+        
+        // if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            // let x : Int = person["userId"] as! Int
+            // let myString = String(x)
+            
+            let params = dummy_trust_me(action: "classifiedlist",
+                                        userId: "15",
+                                        type: "ALL",
+                                        pageNo: "1")
+            
+            
+            print(params as Any)
+            
+            AF.request("https://demo4.evirtualservices.net/trust2m/services/index",
+                       method: .post,
+                       parameters: params,
+                       encoder: JSONParameterEncoder.default).responseJSON { response in
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    if strSuccess == String("success") {
+                        print("yes")
+                        
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var ar : NSArray!
+                        ar = (JSON["data"] as! Array<Any>) as NSArray
+                        self.arr_all_data_get.addObjects(from: ar as! [Any])
+                        
+                        for indexx in 0..<self.arr_all_data_get.count {
+                            
+                            let item = self.arr_all_data_get[indexx] as? [String:Any]
+                            print(item as Any)
+                            
+                            // get classified photos now
+                            
+                            var ar_2 : NSArray!
+                            ar_2 = (item!["CLASSIFIEDPHOTO"] as! Array<Any>) as NSArray
+                            print(ar_2 as Any)
+                            
+                            
+                        }
+                        
+                        /*self.tablView.delegate = self
+                        self.tablView.dataSource = self
+                        self.tablView.reloadData()*/
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                        
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
+        // }
+    }
 }
 
 extension HPDashboardVC: UITableViewDelegate, UITableViewDataSource{

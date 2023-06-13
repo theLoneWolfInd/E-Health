@@ -219,7 +219,7 @@ class PPRegisterVC: UIViewController , CLLocationManagerDelegate {
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -365,7 +365,7 @@ class PPRegisterVC: UIViewController , CLLocationManagerDelegate {
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -473,7 +473,7 @@ class PPRegisterVC: UIViewController , CLLocationManagerDelegate {
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
         
-        let params =  AddDoctors(action: "registration",
+        let params =  register_pharmacy_new(action: "registration",
                                  addedBy: String(self.hospitalClinicUserId),
                                  username: String(cell.txtPharmacyName.text!),
                                  fullName: String(cell.txtPharmacyName.text!),
@@ -488,7 +488,9 @@ class PPRegisterVC: UIViewController , CLLocationManagerDelegate {
                                  role: String("Pharmcy"),
                                  latitude: String(self.strSaveLatitude),
                                  longitude: self.strSaveLongitude,
-                                 countryId: String(self.countryId))
+                                 countryId: String(self.countryId),
+                                            open_time: String(cell.txtTiming.text!),
+                                            close_time: String(cell.txt_close_Timing.text!))
         
         
         print(params as Any)
@@ -554,7 +556,30 @@ class PPRegisterVC: UIViewController , CLLocationManagerDelegate {
         
     }
     
+    @objc func openTimeClickMethod() {
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! PPRegisterTableViewCell
+        
+        RPicker.selectDate(title: "Open Pharmacy Time", cancelText: "Cancel", datePickerMode: .time, didSelectDate: { [](selectedDate) in
+            // TODO: Your implementation for date
+            
+            cell.txtTiming.text = selectedDate.dateString("hh:mm a")
+        })
+        
+    }
     
+    @objc func closeTimeClickMethod() {
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! PPRegisterTableViewCell
+        
+        RPicker.selectDate(title: "Close Pharmacy Time", cancelText: "Cancel", datePickerMode: .time, didSelectDate: { [](selectedDate) in
+            // TODO: Your implementation for date
+            
+            cell.txt_close_Timing.text = selectedDate.dateString("hh:mm a")
+            
+        })
+        
+    }
     
     
 }
@@ -582,6 +607,9 @@ extension PPRegisterVC:UITableViewDelegate, UITableViewDataSource {
         
         cell.btnSignUp.addTarget(self, action: #selector(registerPharmacyWB), for: .touchUpInside)
         
+        cell.btnOpenTime.addTarget(self, action: #selector(openTimeClickMethod), for: .touchUpInside)
+        cell.btnCloseTime.addTarget(self, action: #selector(closeTimeClickMethod), for: .touchUpInside)
+        
         return cell
     }
     
@@ -605,3 +633,4 @@ extension PPRegisterVC:UITableViewDelegate, UITableViewDataSource {
      
     
 }
+

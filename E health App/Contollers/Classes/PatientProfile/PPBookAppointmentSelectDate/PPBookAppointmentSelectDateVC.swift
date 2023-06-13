@@ -11,7 +11,7 @@ import FSCalendar
 import Alamofire
 import SDWebImage
 
-class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
+class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCalendarDataSource , UITextFieldDelegate {
     
     var fetchHospitalDataForBooking:NSDictionary!
     var fetchDoctorDataForBooking:NSDictionary!
@@ -60,6 +60,35 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
             lblDoctorName.textColor = .black
         }
     }
+    
+    @IBOutlet weak var txt_purpose_of_appointment:UITextField! {
+        didSet {
+            txt_purpose_of_appointment.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+            txt_purpose_of_appointment.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+            txt_purpose_of_appointment.layer.shadowOpacity = 1.0
+            txt_purpose_of_appointment.layer.shadowRadius = 15.0
+            txt_purpose_of_appointment.layer.masksToBounds = false
+            txt_purpose_of_appointment.layer.cornerRadius = 15
+            txt_purpose_of_appointment.backgroundColor = .white
+            txt_purpose_of_appointment.setLeftPaddingPoints(24)
+        }
+    }
+    
+    @IBOutlet weak var btn_select_time:UIButton!
+    
+    @IBOutlet weak var txt_select_time:UITextField! {
+        didSet {
+            txt_select_time.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+            txt_select_time.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+            txt_select_time.layer.shadowOpacity = 1.0
+            txt_select_time.layer.shadowRadius = 15.0
+            txt_select_time.layer.masksToBounds = false
+            txt_select_time.layer.cornerRadius = 15
+            txt_select_time.backgroundColor = .white
+            txt_select_time.setLeftPaddingPoints(24)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -69,12 +98,19 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
         lblSelectedDoctor.text = strDoc
         btnConfirmAppointments.addTarget(self, action: #selector(btnConfirmAppointmentsPress), for: .touchUpInside)
         
+        self.txt_purpose_of_appointment.delegate = self
+        
         self.btnNavigationBack.addTarget(self, action: #selector(btnNavigationBackMethod), for: .touchUpInside)
+        
         // print(self.fetchHospitalDataForBooking as Any)
           // print(self.fetchDoctorDataForBooking as Any)
         // fullName
         
         // print(self.fetchDoctorDataForBooking as Any)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
         if self.strHitDirect == "yes" {
             
             self.lblDoctorName.text = (self.fetchHospitalDataForBooking["fullName"] as! String)
@@ -91,10 +127,22 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
             
         }
         
-        
+        self.btn_select_time.addTarget(self, action: #selector(select_time_click_method), for: .touchUpInside)
         
     }
 
+    @objc func select_time_click_method() {
+        
+        RPicker.selectDate(title: "Select Time", cancelText: "Cancel", datePickerMode: .time, didSelectDate: { [weak self](selectedDate) in
+            // TODO: Your implementation for date
+            // self?.outputLabel.text = selectedDate.dateString("hh:mm a")
+            
+            self!.txt_select_time.text = selectedDate.dateString("hh:mm a")
+            
+        })
+        
+    }
+    
     @objc func btnNavigationBackMethod() {
         self.navigationController?.popViewController(animated: true)
     }
@@ -121,13 +169,14 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
           return dateFormatter.date(from: "01-01-2050") ?? Date()
     }
 
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        self.view.endEditing(true)
+    }
     
     @objc func btnConfirmAppointmentsPress(){
         
-        
-    
         self.validationBeforeBookAnAppoitnment()
-        
     }
     
     @objc func validationBeforeBookAnAppoitnment() {
@@ -143,6 +192,8 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
         }
         
     }
+    
+    
     
     // MARK:- APPOINTMENT BOOK -
     @objc func bookAndAppointment() {
@@ -170,7 +221,8 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
                                                      hospitalId: String(""),
                                                      doctorId: String(myString2),
                                                      Adate: String(self.strSelectedDate),
-                                                     ATime: "")
+                                                     ATime: String(self.txt_select_time.text!),
+                                                     notes: String(self.txt_purpose_of_appointment.text!))
                 
                 print(params as Any)
                 
@@ -253,12 +305,22 @@ class PPBookAppointmentSelectDateVC: UIViewController, FSCalendarDelegate, FSCal
                 let x3 : Int = (self.fetchDoctorDataForBooking["userId"] as! Int)
                 let myString3 = String(x3)
                 
+                /*
+                 [action] => addappointment
+                     [userId] => 342
+                     [hospitalId] => 347
+                     [doctorId] => 349
+                     [Adate] => 2021-11-19
+                     [ATime] => 2:57 PM
+                     [notes] => purnima test
+                 */
                 let params = Patient_Book_Appoitment(action: "addappointment",
                                                      userId: String(myString),
                                                      hospitalId: String(myString2),
                                                      doctorId: String(myString3),
                                                      Adate: String(self.strSelectedDate),
-                                                     ATime: "")
+                                                     ATime: String(self.txt_select_time.text!),
+                                                     notes: String(self.txt_purpose_of_appointment.text!))
                 
                 print(params as Any)
                 

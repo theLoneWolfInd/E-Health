@@ -596,7 +596,7 @@ class DLRegisterVC: UIViewController , CLLocationManagerDelegate, UINavigationCo
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -1057,7 +1057,7 @@ class DLRegisterVC: UIViewController , CLLocationManagerDelegate, UINavigationCo
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         

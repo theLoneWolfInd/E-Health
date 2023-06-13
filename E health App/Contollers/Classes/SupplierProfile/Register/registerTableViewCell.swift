@@ -36,16 +36,23 @@ class registerTableViewCell: UITableViewCell, UITextFieldDelegate {
             txtEmail.delegate = self
         }
     }
+    
+    @IBOutlet weak var btn_eye_old_pass:UIButton! {
+        didSet {
+            btn_eye_old_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+        }
+    }
+    
     @IBOutlet weak var txtPassword:UITextField!{
         
         didSet {
             
             Utils.txtUitextField(textField: txtPassword, placeholderName: "Password", setLeftPadding: 20 )
             
-            if let myImage = UIImage(systemName: "lock.fill"){
-                
-                txtPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-            }
+//            if let myImage = UIImage(systemName: "lock.fill"){
+//                
+//                txtPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+//            }
             
             txtPassword.delegate = self
         }

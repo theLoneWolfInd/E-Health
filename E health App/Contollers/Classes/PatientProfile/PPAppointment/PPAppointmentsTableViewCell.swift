@@ -39,7 +39,7 @@ class PPAppointmentsTableViewCell: UITableViewCell {
     @IBOutlet weak var btnAppointmentDateTime:UIButton!
     @IBOutlet weak var btnPatientAddress:UIButton!
     
-    @IBOutlet weak var imgEye: UIImageView!{
+    @IBOutlet weak var imgEye: UIImageView! {
         didSet{
             imgEye.layer.cornerRadius = 5.0
             imgEye.clipsToBounds = true
@@ -47,6 +47,17 @@ class PPAppointmentsTableViewCell: UITableViewCell {
         }
     }
     
+    @IBOutlet weak var lbl_notes:UILabel! {
+        didSet {
+            lbl_notes.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+            lbl_notes.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
+            lbl_notes.layer.shadowOpacity = 1.0
+            lbl_notes.layer.shadowRadius = 15.0
+            lbl_notes.layer.masksToBounds = false
+            lbl_notes.layer.cornerRadius = 15
+            lbl_notes.backgroundColor = .white
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()

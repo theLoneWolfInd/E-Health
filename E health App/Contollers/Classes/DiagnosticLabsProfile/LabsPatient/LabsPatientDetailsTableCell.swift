@@ -17,6 +17,11 @@ class LabsPatientDetailsTableCell: UITableViewCell {
     }
     @IBOutlet weak var imgBanner:UIImageView!
     @IBOutlet weak var lblLabName:UILabel!
+    @IBOutlet weak var lbl_heading:UILabel! {
+        didSet {
+            lbl_heading.textColor = .black
+        }
+    }
     @IBOutlet weak var btnAddress:UIButton!
     
     @IBOutlet weak var viewProfileBG:UIView!{

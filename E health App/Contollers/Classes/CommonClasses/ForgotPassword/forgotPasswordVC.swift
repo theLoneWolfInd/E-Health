@@ -27,6 +27,7 @@ class forgotPasswordVC: UIViewController, UITextFieldDelegate {
             viewImgBG.layer.shadowRadius = 15.0
             viewImgBG.layer.masksToBounds = false
             viewImgBG.layer.cornerRadius = 30.0
+            viewImgBG.backgroundColor = .white
             //viewImgBG.clipsToBounds = true
         }
     }
@@ -40,11 +41,9 @@ class forgotPasswordVC: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var lblText:UILabel!{
         didSet{
-            lblText.text = """
-                            Please enter your email address.
-                            You will receive a link to create a new
-                            password via email.
-                            """
+            lblText.text = "Please enter your register email address and you will receive a new password via email."
+            
+            lblText.textColor = .black
         }
     }
     
@@ -53,12 +52,13 @@ class forgotPasswordVC: UIViewController, UITextFieldDelegate {
             
             Utils.txtUitextField(textField: txtEmail, placeholderName: "Email Address", setLeftPadding: 20)
             
-            if let myImage = UIImage(systemName: "envelope"){
+            if let myImage = UIImage(systemName: "envelope") {
                 txtEmail.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
             }
     
             txtEmail.delegate = self
-            
+            txtEmail.isSecureTextEntry = false
+            txtEmail.textColor = .black
         }
     }
     
@@ -77,8 +77,17 @@ class forgotPasswordVC: UIViewController, UITextFieldDelegate {
         self.navigationController?.isNavigationBarHidden = true
         self.view.backgroundColor = .white
         
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
-    @objc func btnNavigationBackPress(){
+    
+    @objc func btnNavigationBackPress() {
         self.navigationController?.popViewController(animated: true)
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+    }
+    
 }

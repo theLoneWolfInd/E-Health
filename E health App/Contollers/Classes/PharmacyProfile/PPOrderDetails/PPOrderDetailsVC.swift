@@ -145,6 +145,7 @@ class PPOrderDetailsVC: UIViewController {
                     
                     
                 } else {
+                    
                     print("no")
                     ERProgressHud.sharedInstance.hide()
                     
@@ -156,10 +157,7 @@ class PPOrderDetailsVC: UIViewController {
                     alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                     
                     self.present(alert, animated: true)
-                    
-                    
-                    
-                    
+                     
                 }
                 
             case let .failure(error):
@@ -400,13 +398,18 @@ extension PPOrderDetailsVC: UITableViewDataSource, UITableViewDelegate {
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
         
+        // print(self.dictGetAllordersDetails as Any)
         
             let x : Int = (self.dictGetAllordersDetails["orderId"] as! Int)
             let myString = String(x)
            
+        // let x_2 : Int = (self.dictGetAllordersDetails["supplierId"] as! Int)
+        // let myString_2 = String(x_2)
+        
             let params =  Mark_As_Delivered(action: "orderstatus",
                                             orderId: String(myString),
-                                            delivery_status: "1")
+                                            delivery_status: "1",
+                                            supplierId:(self.dictGetAllordersDetails["supplierId"] as! String))
             
             
             print(params as Any)

@@ -24,7 +24,7 @@ class OrderItemsTableCell: UITableViewCell {
     
     @IBOutlet weak var imgProfile:UIImageView! {
         didSet {
-            imgProfile.layer.cornerRadius = 40
+            imgProfile.layer.cornerRadius = 30
             imgProfile.clipsToBounds = true
         }
     }
@@ -35,6 +35,21 @@ class OrderItemsTableCell: UITableViewCell {
             lblMedicineName.numberOfLines = 0
         }
     }
+    
+    @IBOutlet weak var lbl_medicine_quantity:UILabel! {
+        didSet {
+            lbl_medicine_quantity.textColor = .black
+            lbl_medicine_quantity.numberOfLines = 0
+        }
+    }
+    
+    @IBOutlet weak var lbl_medicine_price:UILabel! {
+        didSet {
+            lbl_medicine_price.textColor = .black
+            lbl_medicine_price.numberOfLines = 0
+        }
+    }
+    
     
     @IBOutlet weak var btnQuantity:UIButton! {
         didSet {

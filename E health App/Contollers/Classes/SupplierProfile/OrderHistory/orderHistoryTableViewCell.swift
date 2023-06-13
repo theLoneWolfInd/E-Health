@@ -9,7 +9,11 @@ import UIKit
 
 class orderHistoryTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var lblCustomerName:UILabel!
+    @IBOutlet weak var lblCustomerName:UILabel! {
+        didSet {
+            lblCustomerName.textColor = .black
+        }
+    }
     @IBOutlet weak var lblDate:UILabel!
     @IBOutlet weak var lblOptional:UILabel!
     @IBOutlet weak var imgCustomer:UIImageView! {

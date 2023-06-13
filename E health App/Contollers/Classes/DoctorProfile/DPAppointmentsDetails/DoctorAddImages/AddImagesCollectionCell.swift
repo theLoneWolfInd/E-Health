@@ -24,4 +24,10 @@ class AddImagesCollectionCell: UICollectionViewCell {
         }
     }
     
+    @IBOutlet weak var lbl_Date:UILabel! {
+        didSet {
+            lbl_Date.textColor = .black
+        }
+    }
+    
 }

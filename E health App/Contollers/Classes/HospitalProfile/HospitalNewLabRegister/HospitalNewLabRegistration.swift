@@ -511,7 +511,7 @@ class HospitalNewLabRegistration: UIViewController , CLLocationManagerDelegate, 
                     
                     
                 }
-                else{
+                else {
                     print("no")
                     ERProgressHud.sharedInstance.hide()
                     
@@ -549,7 +549,7 @@ class HospitalNewLabRegistration: UIViewController , CLLocationManagerDelegate, 
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -619,12 +619,7 @@ class HospitalNewLabRegistration: UIViewController , CLLocationManagerDelegate, 
         picker.show(withAnimation: .FromBottom)
         
     }
-    
-    
-    
-    
-    
-    
+
     @objc func cellTappedMethod2(_ sender:AnyObject) {
             print("you tap image number: \(sender.view.tag)")
            
@@ -655,6 +650,7 @@ class HospitalNewLabRegistration: UIViewController , CLLocationManagerDelegate, 
        }
        
        @objc func openCamera1() {
+           
            let imagePicker = UIImagePickerController()
            imagePicker.delegate = self
            imagePicker.sourceType = .camera;
@@ -664,6 +660,7 @@ class HospitalNewLabRegistration: UIViewController , CLLocationManagerDelegate, 
        }
        
        @objc func openGallery1() {
+           
            let imagePicker = UIImagePickerController()
            imagePicker.delegate = self
            imagePicker.sourceType = .photoLibrary;

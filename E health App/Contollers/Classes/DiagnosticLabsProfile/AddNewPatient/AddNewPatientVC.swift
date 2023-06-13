@@ -20,7 +20,13 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
     var countryId = ""
     var countryListArray:NSMutableArray = []
     
+    
+    var myStr_disease = ""
+    var disease_id_is = ""
+    var arr_disease_list:NSMutableArray = []
+    
     var saveCountryId:String!
+    var save_disease_id:String!
     
     var imageStr:String! = "0"
     var imgData:Data!
@@ -63,12 +69,14 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
         fetchServerValuesAndParse()
         countryListWebService()
         
+        print(self.getAllDetails as Any)
         
         print(self.strProfileForEdit as Any)
         
         if self.strProfileForEdit == "yes" {
             
             lblNavigationBar.text = "EDIT PATIENT"
+            self.disease_list_WB()
             
         } else {
             self.createRandomPatientMedicalId()
@@ -81,7 +89,7 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
     }
     
     @objc func fetchServerValuesAndParse() {
-      
+        
     }
     
     
@@ -99,62 +107,64 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                    method: .post,
                    parameters: params,
                    encoder: JSONParameterEncoder.default).responseJSON { response in
-                    // debugPrint(response.result)
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                print(strSuccess as Any)
+                
+                if strSuccess == String("success") {
+                    print("yes")
                     
-                    switch response.result {
-                    case let .success(value):
-                        
-                        let JSON = value as! NSDictionary
-                        print(JSON as Any)
-                        
-                        var strSuccess : String!
-                        strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                        print(strSuccess as Any)
-                        
-                        if strSuccess == String("success") {
-                            print("yes")
-                            
-                            ERProgressHud.sharedInstance.hide()
-                            
-                            var dict: Dictionary<AnyHashable, Any>
-                            dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                            
-                            self.strRandomMedicalId = (dict["medicalCardID"] as! String)
-                            
-                            let indexPath = IndexPath.init(row: 0, section: 0)
-                            let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
-                            
-                            
-                            
-                            cell.txtUID.text = self.strRandomMedicalId
-                            cell.txtUID.isUserInteractionEnabled = false
-                            
-                        } else {
-                            print("no")
-                            ERProgressHud.sharedInstance.hide()
-                            
-                            var strSuccess2 : String!
-                            strSuccess2 = JSON["msg"]as Any as? String
-                            
-                            let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                            
-                            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                            
-                            self.present(alert, animated: true)
-                            
-                            
-                            
-                            
-                        }
-                        
-                    case let .failure(error):
-                        print(error)
-                        ERProgressHud.sharedInstance.hide()
-                        
-                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
-                    }
+                    ERProgressHud.sharedInstance.hide()
                     
-                   }
+                    var dict: Dictionary<AnyHashable, Any>
+                    dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                    
+                    self.strRandomMedicalId = (dict["medicalCardID"] as! String)
+                    
+                    let indexPath = IndexPath.init(row: 0, section: 0)
+                    let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+                    
+                    
+                    
+                    cell.txtUID.text = self.strRandomMedicalId
+                    cell.txtUID.isUserInteractionEnabled = false
+                    
+                    self.disease_list_WB()
+                    
+                } else {
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    
+                    self.present(alert, animated: true)
+                    
+                    
+                    
+                    
+                }
+                
+            case let .failure(error):
+                print(error)
+                ERProgressHud.sharedInstance.hide()
+                
+                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+            }
+            
+        }
     }
     
     @objc func validationBeforeAddPatient() {
@@ -308,7 +318,8 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                                      longitude: "N.A.",
                                      gender: String(cell.txtGender.text!),
                                      fee_Paid_for_M_card:String(self.strUserPaidOrNot),
-                                     address:String(cell.txtAddress.text!))
+                                     address:String(cell.txtAddress.text!),
+                                     Disease:String(""))
             
             
             print(params as Any)
@@ -321,78 +332,78 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                        method: .post,
                        parameters: params,
                        encoder: JSONParameterEncoder.default).responseJSON { response in
-                        // debugPrint(response.result)
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    if strSuccess == String("success") {
+                        print("yes")
                         
-                        switch response.result {
-                        case let .success(value):
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        // var dict: Dictionary<AnyHashable, Any>
+                        // dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                        
+                        if self.strProfileForEdit == "yes" {
                             
-                            let JSON = value as! NSDictionary
-                            print(JSON as Any)
+                        } else {
                             
                             var strSuccess : String!
-                            strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                            print(strSuccess as Any)
-                            if strSuccess == String("success") {
-                                print("yes")
-                                
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                // var dict: Dictionary<AnyHashable, Any>
-                                // dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                
-                                if self.strProfileForEdit == "yes" {
-                                    
-                                } else {
-                                    
-                                    var strSuccess : String!
-                                    strSuccess = (JSON["msg"]as Any as? String)
-                                    
-                                    let alert = NewYorkAlertController(title: "Success", message: String(strSuccess), style: .alert)
-
-                                    alert.addImage(UIImage.gif(name: "success3"))
-                                    
-                                    let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
-                                         self.navigationController?.popViewController(animated: true)
-                                    }
-                                    alert.addButtons([cancel])
-
-                                    self.present(alert, animated: true)
-                                    
-                                    
-                                }
-                                
-                                /*
-                                 let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
-                                 push!.getPatientRegistrationDetails = dict as NSDictionary?
-                                 self.navigationController?.pushViewController(push!, animated: true)
-                                 */
-                                
-                                
-                            } else {
-                                print("no")
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var strSuccess2 : String!
-                                strSuccess2 = JSON["msg"]as Any as? String
-                                
-                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                
-                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                                
-                                self.present(alert, animated: true)
-                                
-                                
-                                
-                                
+                            strSuccess = (JSON["msg"]as Any as? String)
+                            
+                            let alert = NewYorkAlertController(title: "Success", message: String(strSuccess), style: .alert)
+                            
+                            alert.addImage(UIImage.gif(name: "success3"))
+                            
+                            let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                                self.navigationController?.popViewController(animated: true)
                             }
+                            alert.addButtons([cancel])
                             
-                        case let .failure(error):
-                            print(error)
-                            ERProgressHud.sharedInstance.hide()
+                            self.present(alert, animated: true)
                             
-                        // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                            
                         }
-                       }
+                        
+                        /*
+                         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+                         push!.getPatientRegistrationDetails = dict as NSDictionary?
+                         self.navigationController?.pushViewController(push!, animated: true)
+                         */
+                        
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                        
+                        
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
         }
     }
     
@@ -401,48 +412,47 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
         let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
         /*
          if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-             // let str:String = person["role"] as! String
-             
-             let x : Int = person["userId"] as! Int
-             let myString = String(x)
-             
-             let indexPath = IndexPath.init(row: 0, section: 0)
-             let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
-             
-             var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10.0 * 1000)
-             urlRequest.httpMethod = "POST"
-             urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
-             
-             
-             
-             //Set Your Parameter
-             let parameterDict = NSMutableDictionary()
-             
-             if self.strProfileForEdit == "yes" {
-                 
-                 ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Updating...")
-                 parameterDict.setValue("editProfile", forKey: "action")
-                 
-             } else {
-                 
-                 ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-                 parameterDict.setValue("registration", forKey: "action")
-                 parameterDict.setValue(String(cell.txtPassword.text!), forKey: "password")
-                 
-             }
-             
-             if (person["role"] as! String) == "Hospital" {
-                 
-                 let x2 : Int = self.getAllDetails["userId"] as! Int
-                 let myString2 = String(x2)
-                 
-                 parameterDict.setValue(String(myString), forKey: "addedBy")
-                 parameterDict.setValue(String(myString2), forKey: "userId")
-                 
-             } else {
-                 
-                 parameterDict.setValue(String(myString), forKey: "addedBy")
-             }
+         // let str:String = person["role"] as! String
+         
+         let x : Int = person["userId"] as! Int
+         let myString = String(x)
+         
+         let indexPath = IndexPath.init(row: 0, section: 0)
+         let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+         
+         var urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10.0 * 1000)
+         urlRequest.httpMethod = "POST"
+         urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+         
+         
+         
+         //Set Your Parameter
+         let parameterDict = NSMutableDictionary()
+         
+         if self.strProfileForEdit == "yes" {
+         
+         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Updating...")
+ 
+         } else {
+         
+         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+         parameterDict.setValue("registration", forKey: "action")
+         parameterDict.setValue(String(cell.txtPassword.text!), forKey: "password")
+         
+         }
+         
+         if (person["role"] as! String) == "Hospital" {
+         
+         let x2 : Int = self.getAllDetails["userId"] as! Int
+         let myString2 = String(x2)
+         
+         parameterDict.setValue(String(myString), forKey: "addedBy")
+         parameterDict.setValue(String(myString2), forKey: "userId")
+         
+         } else {
+         
+         parameterDict.setValue(String(myString), forKey: "addedBy")
+         }
          */
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Updating...")
@@ -455,32 +465,33 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
             let x2 : Int = self.getAllDetails["userId"] as! Int
             let myString2 = String(x2)
             
-            let params =  EditPatient(action: "editProfile",
-                                     addedBy: String(myString),
+            let params =  EditPatient_2(action: "editProfile",
+                                      addedBy: String(myString),
                                       userId: String(myString2),
-                                     registeredDt: String(cell.txtDateOfReg.text!),
-                                     medicalCardID: String(cell.txtUID.text!),
-                                     fullName: String(cell.txtFirstName.text!),
-                                     middleName: String(cell.txtMiddleName.text!),
-                                     lastName: String(cell.txtLastName.text!),
-                                     dob: String(cell.txtDob.text!),
-                                     username: String(cell.txtUserName.text!),
-                                     email: String(cell.txtEmail.text!),
-                                     contactNumber: String(cell.txtPhoneNumber.text!),
-                                     password: String(cell.txtPassword.text!),
-                                     city: String(cell.txtCity.text!),
-                                     height: String(cell.txtHeight.text!),
-                                     eyeColor: String(cell.txtEyeColor.text!),
-                                     securityNumber: String(cell.txtPinNumber.text!),
-                                     zipCode: String("N.A."),
-                                     countryId: String(self.saveCountryId),
-                                     device: MY_DEVICE,
-                                     role: "Patient",
-                                     latitude: "N.A.",
-                                     longitude: "N.A.",
-                                     gender: String(cell.txtGender.text!),
-                                     fee_Paid_for_M_card:String(self.strUserPaidOrNot),
-                                      address:String(cell.txtAddress.text!))
+                                      registeredDt: String(cell.txtDateOfReg.text!),
+                                      medicalCardID: String(cell.txtUID.text!),
+                                      fullName: String(cell.txtFirstName.text!),
+                                      middleName: String(cell.txtMiddleName.text!),
+                                      lastName: String(cell.txtLastName.text!),
+                                      dob: String(cell.txtDob.text!),
+                                      username: String(cell.txtUserName.text!),
+                                      email: String(cell.txtEmail.text!),
+                                      contactNumber: String(cell.txtPhoneNumber.text!),
+                                      password: String(cell.txtPassword.text!),
+                                      city: String(cell.txtCity.text!),
+                                      height: String(cell.txtHeight.text!),
+                                      eyeColor: String(cell.txtEyeColor.text!),
+                                      securityNumber: String(cell.txtPinNumber.text!),
+                                      zipCode: String("N.A."),
+                                      countryId: String(self.saveCountryId),
+                                      device: MY_DEVICE,
+                                      role: "Patient",
+                                      latitude: "N.A.",
+                                      longitude: "N.A.",
+                                      gender: String(cell.txtGender.text!),
+                                      fee_Paid_for_M_card:String(self.strUserPaidOrNot),
+                                      address:String(cell.txtAddress.text!),
+                                        Disease:String(self.disease_id_is))
             
             
             print(params as Any)
@@ -489,89 +500,89 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                        method: .post,
                        parameters: params,
                        encoder: JSONParameterEncoder.default).responseJSON { response in
-                        // debugPrint(response.result)
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == String("success") {
+                        print("yes")
                         
-                        switch response.result {
-                        case let .success(value):
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var dict: Dictionary<AnyHashable, Any>
+                        dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                        
+                        if self.strProfileForEdit == "yes" {
                             
-                            let JSON = value as! NSDictionary
-                            print(JSON as Any)
+                            let alert = UIAlertController(title: String("Success").uppercased(), message: String(strSuccess2), preferredStyle: .alert)
                             
-                            var strSuccess : String!
-                            strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                            print(strSuccess as Any)
+                            alert.addAction(UIAlertAction(title: "Edit Medical History", style: .default, handler: { action  in
+                                
+                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+                                
+                                push!.getPatientRegistrationDetails = dict as NSDictionary?
+                                
+                                self.navigationController?.pushViewController(push!, animated: true)
+                            }))
                             
-                            var strSuccess2 : String!
-                            strSuccess2 = JSON["msg"]as Any as? String
+                            alert.addAction(UIAlertAction(title: "Dismiss", style: .destructive, handler: { action  in
+                                
+                            }))
                             
-                            if strSuccess == String("success") {
-                                print("yes")
-                                
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var dict: Dictionary<AnyHashable, Any>
-                                dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                
-                               if self.strProfileForEdit == "yes" {
-                                   
-                                   let alert = UIAlertController(title: String("Success").uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                   
-                                   alert.addAction(UIAlertAction(title: "Edit Medical History", style: .default, handler: { action  in
-                                       
-                                       let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
-                                       
-                                       push!.getPatientRegistrationDetails = dict as NSDictionary?
-                                       
-                                       self.navigationController?.pushViewController(push!, animated: true)
-                                   }))
-                                   
-                                   alert.addAction(UIAlertAction(title: "Dismiss", style: .destructive, handler: { action  in
-                                       
-                                   }))
-                                   
-                                   self.present(alert, animated: true)
-                                   
-                               } else {
-                                   
-                                   let alert = UIAlertController(title: String("Success").uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                   
-                                   /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
-                                   push!.getPatientRegistrationDetails = dict as NSDictionary?
-                                   self.navigationController?.pushViewController(push!, animated: true)*/
-                                   
-                                   alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
-                                       
-                                   }))
-                                   
-                                   self.present(alert, animated: true)
-                                   
-                               }
-                                
-                            } else {
-                                print("no")
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var strSuccess2 : String!
-                                strSuccess2 = JSON["msg"]as Any as? String
-                                
-                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                
-                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                                
-                                self.present(alert, animated: true)
-                                
-                                
-                                
-                                
-                            }
+                            self.present(alert, animated: true)
                             
-                        case let .failure(error):
-                            print(error)
-                            ERProgressHud.sharedInstance.hide()
+                        } else {
                             
-                        // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                            let alert = UIAlertController(title: String("Success").uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                            
+                            /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+                             push!.getPatientRegistrationDetails = dict as NSDictionary?
+                             self.navigationController?.pushViewController(push!, animated: true)*/
+                            
+                            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
+                                
+                            }))
+                            
+                            self.present(alert, animated: true)
+                            
                         }
-                       }
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                        
+                        
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
         }
     }
     
@@ -630,8 +641,8 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
     
     internal func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-         let indexPath = IndexPath.init(row: 0, section: 0)
-         let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
         
         let image_data = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         cell.imgUploadBg.image = image_data // show image on profile
@@ -639,7 +650,7 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
         self.imageStr = imageData.base64EncodedString()
         self.dismiss(animated: true, completion: nil)
         self.imgData = image_data!.jpegData(compressionQuality: 0.2)!
-         
+        
         
         self.imageStr = "1"
         
@@ -680,6 +691,8 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                 let x2 : Int = self.getAllDetails["userId"] as! Int
                 let myString2 = String(x2)
                 parameterDict.setValue(String(myString2), forKey: "userId")
+                
+                
                 
             } else {
                 
@@ -728,6 +741,9 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
             parameterDict.setValue(String(self.strUserPaidOrNot), forKey: "fee_Paid_for_M_card")
             parameterDict.setValue(String(cell.txtPinNumber.text!), forKey: "securityNumber")
             parameterDict.setValue(String(cell.txtAddress.text!), forKey: "address")
+            
+            parameterDict.setValue(String(self.disease_id_is), forKey: "Disease")
+        
             
             print(parameterDict as Any)
             
@@ -789,7 +805,7 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
             .responseJSON(completionHandler: { data in
                 
                 switch data.result {
-                
+                    
                 case .success(_):
                     do {
                         
@@ -802,8 +818,8 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                         ERProgressHud.sharedInstance.hide()
                         self.imageStr = "0"
                         
-                         var strSuccess2 : String!
-                         strSuccess2 = dictionary["msg"]as Any as? String
+                        var strSuccess2 : String!
+                        strSuccess2 = dictionary["msg"]as Any as? String
                         
                         var strSuccess : String!
                         strSuccess = dictionary["status"]as Any as? String
@@ -847,8 +863,8 @@ class AddNewPatientVC: UIViewController , UINavigationControllerDelegate , UIIma
                                 let alert = UIAlertController(title: String("Success").uppercased(), message: String(strSuccess2), preferredStyle: .alert)
                                 
                                 /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
-                                push!.getPatientRegistrationDetails = dict as NSDictionary?
-                                self.navigationController?.pushViewController(push!, animated: true)*/
+                                 push!.getPatientRegistrationDetails = dict as NSDictionary?
+                                 self.navigationController?.pushViewController(push!, animated: true)*/
                                 
                                 alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
                                     self.btnNavigationBackPress()
@@ -902,6 +918,7 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
         cell.btnDOB.addTarget(self, action: #selector(btnDOBPress), for: .touchUpInside)
         cell.btnGender.addTarget(self, action: #selector(btnGenderPress), for: .touchUpInside)
         cell.btnCountry.addTarget(self, action: #selector(btnCountryPress), for: .touchUpInside)
+        cell.btn_disease.addTarget(self, action: #selector(disease_list_pop_up), for: .touchUpInside)
         
         cell.btnAddMedicalHistory.addTarget(self, action: #selector(btnAddMedicalHistoryPress), for: .touchUpInside)
         
@@ -949,52 +966,52 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
          */
         
         if self.strProfileForEdit == "yes" {
-                
+            
             // let indexPath = IndexPath.init(row: 0, section: 0)
             // let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
-                
+            
             cell.btnSubmit.setTitle("Update", for: .normal)
             cell.btnAddMedicalHistory.setTitle("Edit Medical History", for: .normal)
             
-             print(self.getAllDetails as Any)
+            print(self.getAllDetails as Any)
             /*
-                 address = ramprastha;
-                 city = Ghaziabad;
-                 contactNumber = 9845464626222;
-                 country = India;
-                 department = "";
-                 description = "";
-                 device = Android;
-                 deviceToken = "";
-                 dob = "10 Sep, 2004";
-                 email = "maxx@mailinator.com";
-                 eyeColor = black;
-                 firebaseId = "";
-                 fullName = Maxx;
-                 gender = Gender;
-                 height = "5'1";
-                 image = "https://demo4.evirtualservices.net/ehealth/img/uploads/users/1632223019images(12).jpeg";
-                 lastName = one;
-                 latitude = "28.6634131";
-                 longitude = "77.3239693";
-                 medicalCardID = "91PX-205M-2E60-P39Z";
-                 middleName = new;
-                 practiceDate = "";
-                 registeredDt = "21 Sep, 2021";
-                 role = Patient;
-                 socialId = "";
-                 socialType = "";
-                 specialty = "";
-                 state = "";
-                 status = 1;
-                 userId = 187;
-                 zipCode = 201011;
+             address = ramprastha;
+             city = Ghaziabad;
+             contactNumber = 9845464626222;
+             country = India;
+             department = "";
+             description = "";
+             device = Android;
+             deviceToken = "";
+             dob = "10 Sep, 2004";
+             email = "maxx@mailinator.com";
+             eyeColor = black;
+             firebaseId = "";
+             fullName = Maxx;
+             gender = Gender;
+             height = "5'1";
+             image = "https://demo4.evirtualservices.net/ehealth/img/uploads/users/1632223019images(12).jpeg";
+             lastName = one;
+             latitude = "28.6634131";
+             longitude = "77.3239693";
+             medicalCardID = "91PX-205M-2E60-P39Z";
+             middleName = new;
+             practiceDate = "";
+             registeredDt = "21 Sep, 2021";
+             role = Patient;
+             socialId = "";
+             socialType = "";
+             specialty = "";
+             state = "";
+             status = 1;
+             userId = 187;
+             zipCode = 201011;
              
              cell.btnCheckUnchek.setImage(UIImage(named: "check5"), for: .normal)
              
              btn.tag = 1
              
-         } else if btn.tag == 1 {
+             } else if btn.tag == 1 {
              
              self.strUserPaidOrNot = "0"
              
@@ -1003,9 +1020,9 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
              */
             
             if self.getAllDetails["fee_Paid_for_M_card"] is String {
-                              
+                
                 print("Yes, it's a String")
-              
+                
                 if (self.getAllDetails["fee_Paid_for_M_card"] as! String) == "1" {
                     
                     cell.btnCheckUnchek.setImage(UIImage(named: "check5"), for: .normal)
@@ -1049,12 +1066,14 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
             cell.txtAddress.text = (self.getAllDetails["address"] as! String)
             cell.txtCity.text = (self.getAllDetails["city"] as! String)
             cell.txtCountryName.text = (self.getAllDetails["country"] as! String)
+            cell.txt_disease_name.text = (self.getAllDetails["Disease"] as! String)
+            
             cell.txtCountryName.textColor = .black
             
             if self.getAllDetails["countryId"] is String {
-                              
+                
                 print("Yes, it's a String")
-              
+                
                 self.saveCountryId = (self.getAllDetails["countryId"] as! String)
                 
             } else if self.getAllDetails["countryId"] is Int {
@@ -1099,8 +1118,8 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
     }
     
     @objc func checkUncheckPaid(_ sender:UIButton) {
-         let indexPath = IndexPath.init(row: 0, section: 0)
-         let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
         
         let btn:UIButton = sender
         
@@ -1189,7 +1208,7 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -1254,49 +1273,215 @@ extension AddNewPatientVC:UITableViewDelegate, UITableViewDataSource{
         
         
         let params =
-            countryListWeb(action: "countrylist")
-                        
-            
-            print(params as Any)
-            
-            AF.request(APPLICATION_BASE_URL,
-                       method: .post,
-                       parameters: params,
-                       encoder: JSONParameterEncoder.default).responseJSON { response in
-                        // debugPrint(response.result)
-                        
-    switch response.result {
-        case let .success(value):
-            
-            let JSON = value as! NSDictionary
-            
-            // print(JSON as Any)
-            
-            var strSuccess : String!
-            strSuccess = JSON["status"]as Any as? String
-                            
-            if strSuccess == String("success") {
-                    
-                print("yes")
-                                
-                var ar : NSArray!
-                 ar = (JSON["data"] as! Array<Any>) as NSArray
-                  self.countryListArray.addObjects(from: ar as! [Any])
-    
-                
-            }
-    else{
-            print("no")
-                                
-    }
-    case let .failure(error):
+        countryListWeb(action: "countrylist")
         
-            print(error)
-                        }
-                        
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                
+                // print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = JSON["status"]as Any as? String
+                
+                if strSuccess == String("success") {
+                    
+                    print("yes")
+                    
+                    var ar : NSArray!
+                    ar = (JSON["data"] as! Array<Any>) as NSArray
+                    self.countryListArray.addObjects(from: ar as! [Any])
+                    
+                    
+                    
+                }
+                else{
+                    print("no")
+                    
+                }
+            case let .failure(error):
+                
+                print(error)
             }
             
         }
+        
+    }
+    
+    @objc func disease_list_WB() {
+        self.tablView.reloadData()
+        
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+        
+        
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
+        let params = List_Of_All_Disease(action: "diseases", keyword: "")
+        
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                
+                 // print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = JSON["status"]as Any as? String
+                
+                if strSuccess == String("success") {
+                    
+                    print("yes")
+                    
+                    
+                    var ar : NSArray!
+                    ar = (JSON["data"] as! Array<Any>) as NSArray
+                    self.arr_disease_list.addObjects(from: ar as! [Any])
+                    
+                    
+                    if self.strProfileForEdit == "yes" {
+                     
+                        for indexx in 0..<self.arr_disease_list.count {
+                            
+                            
+                            let item = self.arr_disease_list[indexx] as? [String:Any]
+                            
+                            if "\(item!["DiseaseId"]!)" == "\(self.getAllDetails["Disease"]!)" {
+                                // print("dishu rajput")
+                                // print(item as Any)
+                                
+                                ERProgressHud.sharedInstance.hide()
+                                
+                                self.save_disease_id = "\(item!["DiseaseId"]!)"
+                                
+                                cell.txt_disease_name.text = (item!["name"] as! String)
+                                return
+                                
+                            }
+                            
+                        }
+                        
+                        
+                    } else {
+                        ERProgressHud.sharedInstance.hide()
+                    }
+                    
+                    
+                }
+                else {
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                }
+            case let .failure(error):
+                ERProgressHud.sharedInstance.hide()
+                print(error)
+            }
+            
+        }
+        
+    }
+    
+    @objc func disease_list_pop_up(_ sender: UIButton) {
+        
+        
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! AddNewPatientTableViewCell
+        
+        let redAppearance = YBTextPickerAppearanceManager.init(
+            pickerTitle         : "Select Disease",
+            titleFont           : boldFont,
+            titleTextColor      : .white,
+            titleBackground     : sender.backgroundColor,
+            searchBarFont       : regularFont,
+            searchBarPlaceholder: "Search Disease",
+            closeButtonTitle    : "Cancel",
+            closeButtonColor    : .darkGray,
+            closeButtonFont     : regularFont,
+            doneButtonTitle     : "Okay",
+            doneButtonColor     : sender.backgroundColor,
+            doneButtonFont      : boldFont,
+            checkMarkPosition   : .Right,
+            itemCheckedImage    : UIImage(named:"red_ic_checked"),
+            itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
+            itemColor           : .blue,
+            itemFont            : regularFont
+        )
+        
+        //let arrGender = ["Male", "Female", "Prefer not to Say"]
+        
+        let item = arr_disease_list.mutableArrayValue(forKey: "name")
+        
+        
+        // let item2 = arr_disease_list.mutableArrayValue(forKey: "id")
+        
+        //print(item as Any)
+        
+        let picker = YBTextPicker.init(with: item as! [String], appearance: redAppearance,onCompletion: { [self] (selectedIndexes, selectedValues) in
+            
+            if let selectedValue = selectedValues.first{
+                
+                cell.txt_disease_name.text = "\(selectedValue)"
+                cell.txt_disease_name.textColor = .black
+                
+                myStr_disease = selectedValue
+                
+                
+                // print(myStr)
+                
+                for index in 0..<arr_disease_list.count {
+                    
+                    let itm = arr_disease_list[index] as? [String:Any]
+                    
+                    // let name = (itm!["name"] as! String)
+                    
+                    //print(name)
+                    
+                    if myStr_disease == (itm!["name"] as! String) {
+                        
+                        print("selected index = \(arr_disease_list[index])")
+                        
+                        disease_id_is = String((itm!["DiseaseId"] as! Int))
+                        
+                        self.save_disease_id = disease_id_is
+                    }
+                }
+                
+            }
+            else {
+                cell.btn_disease.setTitle("Select Country", for: .normal)
+                
+            }
+        },
+                                       onCancel: {
+            
+            print("Cancelled")
+        }
+                                       
+        )
+        
+        
+        picker.show(withAnimation: .FromBottom)
+        
+    }
     
     @objc func btnAddMedicalHistoryPress() {
         

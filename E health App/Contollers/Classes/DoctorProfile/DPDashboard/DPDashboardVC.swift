@@ -105,7 +105,7 @@ class DPDashboardVC: UIViewController {
     
     @objc func btnCheckAppointmentsPress() {
         
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPAppointmentsVC") as? PPAppointmentsVC
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ReportsId") as? Reports
         self.navigationController?.pushViewController(push!, animated: true)
         
     }
@@ -173,8 +173,10 @@ extension DPDashboardVC: UITableViewDelegate, UITableViewDataSource{
             cell.selectedBackgroundView = backgroundView
          
              cell.btnAddress.setTitle(" "+(self.dictDoctorLoginData["address"] as! String), for: .normal)
+             cell.btnAddress.setTitleColor(.black, for: .normal)
              
              cell.lblDoctorName.text = (self.dictDoctorLoginData["fullName"] as! String)
+             cell.lblDoctorName.textColor = .black
              
              cell.lblPhone.text = (self.dictDoctorLoginData["contactNumber"] as! String)
              cell.lblEmail.text = (self.dictDoctorLoginData["email"] as! String)

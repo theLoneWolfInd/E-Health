@@ -340,7 +340,7 @@ extension DPRegisterVC:UITableViewDelegate, UITableViewDataSource{
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -557,7 +557,7 @@ extension DPRegisterVC:UITableViewDelegate, UITableViewDataSource{
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         

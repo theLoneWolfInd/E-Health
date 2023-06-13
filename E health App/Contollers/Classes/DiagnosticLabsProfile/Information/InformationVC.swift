@@ -278,6 +278,16 @@ extension InformationVC: UITableViewDelegate, UITableViewDataSource{
                                 let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(identifier: "SuccessId")
                                 self.navigationController?.pushViewController(push, animated: true)
                                 
+                            } else if person["role"] as! String == "Lab" {
+                                
+                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(identifier: "DashboardDLPVC")
+                                self.navigationController?.pushViewController(push, animated: true)
+                                
+                            } else if person["role"] as! String == "Pharmacy" {
+                                
+                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(identifier: "DashboardDLPVC")
+                                self.navigationController?.pushViewController(push, animated: true)
+                                
                             }
                         }
                         

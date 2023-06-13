@@ -18,6 +18,14 @@ class HPDoctorsVC: UIViewController {
     
     var arrListOfAllDoctors : NSMutableArray! = []
     
+    var str_from_reports:String!
+    var str_report_role:String!
+    var str_start_Date:String!
+    var str_end_Date:String!
+    var str_paid:String!
+    var str_keyword:String!
+    
+    
     var nameArray = ["Dishant Rajput","Deepak Kumar","Pankaj Sharma","Steve Richomnd","Natile Shawn Johnson","Dishant Rajput","Deepak Kumar","Pankaj Sharma","Steve Richomnd","Natile Shawn Johnson"]
     
     var amountArray = ["$245.73","$1297.034", "$09.2",
@@ -108,7 +116,18 @@ class HPDoctorsVC: UIViewController {
         } else if strMyProfileIs == "FromHospitalProfileToPatient" {
             
             self.lblNavigationBar.text = "PATIENT"
-            self.allDataListings(strRole: "Patient", strSearchValue: "")
+            
+            if self.str_from_reports == "yes" {
+                
+                self.show_reports_Result()
+                
+            } else {
+                
+                self.allDataListings(strRole: "Patient", strSearchValue: "")
+                
+            }
+            
+            
             // self.searchBar.placeholder = "Search Patient here...."
             self.strSearchText = "Patient"
             self.strSearchMessage = "You can search Patient via Name"
@@ -677,6 +696,87 @@ class HPDoctorsVC: UIViewController {
         
     }
     
+    
+    
+    
+    @objc func show_reports_Result() {
+        self.arrListOfAllDoctors.removeAllObjects()
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            let x : Int = person["userId"] as! Int
+            let myString = String(x)
+            
+            let params = get_all_patient_list(action: "userlist",
+                                              role: String(self.str_report_role),
+                                              addedBy: String(myString),
+                                              start_date: String(self.str_start_Date),
+                                              end_date: String(self.str_end_Date),
+                                              paid: String(self.str_paid),
+                                              keyword: String(self.str_keyword))
+            
+            
+            print(params as Any)
+            
+            AF.request(APPLICATION_BASE_URL,
+                       method: .post,
+                       parameters: params,
+                       encoder: JSONParameterEncoder.default).responseJSON { response in
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    if strSuccess == String("success") {
+                        print("yes")
+                        
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var ar : NSArray!
+                        ar = (JSON["data"] as! Array<Any>) as NSArray
+                        self.arrListOfAllDoctors.addObjects(from: ar as! [Any])
+                        
+                        self.tablView.delegate = self
+                        self.tablView.dataSource = self
+                        self.tablView.reloadData()
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = NewYorkAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), style: .alert)
+                        
+                        alert.addImage(UIImage.gif(name: "gif_alert"))
+                        
+                        let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                            
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                        alert.addButtons([cancel])
+                        
+                        self.present(alert, animated: true)
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
+        }
+    }
 }
 
 

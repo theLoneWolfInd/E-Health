@@ -247,7 +247,7 @@ extension dashboardVC: UITableViewDelegate, UITableViewDataSource{
     
     @objc func historyClickMethod() {
         
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "orderHistoryVC") as? orderHistoryVC
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ReportsId") as? Reports
         self.navigationController?.pushViewController(push!, animated: true)
         
     }

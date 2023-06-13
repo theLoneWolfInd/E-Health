@@ -1,0 +1,6 @@
+framework module Pods_E_health_App_E_health_AppUITests {
+  umbrella header "Pods-E health App-E health AppUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

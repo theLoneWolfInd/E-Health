@@ -1,4 +1,4 @@
- //
+//
 //  manageInventoryVC.swift
 //  E health App
 //
@@ -190,6 +190,16 @@ class manageInventoryVC: UIViewController, UITableViewDelegate, UITableViewDataS
         
         cell.lblMedicineName.text = (item!["name"] as! String)
         
+        if self.strWhereAreYouFrom == "supplierProfile" {
+            
+            cell.btn_edit.isHidden = false
+        } else {
+            cell.btn_edit.isHidden = true
+        }
+        
+        cell.btn_edit.tag = indexPath.row
+        cell.btn_edit.addTarget(self, action: #selector(edit_click_method), for: .touchUpInside)
+        
         cell.imgMedicine.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
         cell.imgMedicine.sd_setImage(with: URL(string: (item!["image"] as! String)), placeholderImage: UIImage(named: "1024"))
         
@@ -197,6 +207,74 @@ class manageInventoryVC: UIViewController, UITableViewDelegate, UITableViewDataS
         // }
         
         return cell
+    }
+    
+    @objc func edit_click_method(_ sender:UIButton) {
+        
+        
+        // print("you tap image number: \(sender.view.tag)")
+        
+        let alert = UIAlertController(title: "Settings", message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "Edit medicine", style: .default , handler:{ (UIAlertAction)in
+            print("User click Approve button")
+            
+            let item = self.arrListOfAllMedicines[sender.tag] as? [String:Any]
+            
+            // print(item as Any)
+            
+            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddMoreMedicinesId") as? AddMoreMedicines
+            
+            push!.getProfileInfo = "edit_medicine"
+            push!.getDictOfThatMedicine = item as NSDictionary?
+            
+            self.navigationController?.pushViewController(push!, animated: true)
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Delete medicine", style: .destructive , handler:{ (UIAlertAction)in
+            print("User click Edit button")
+            
+            let item = self.arrListOfAllMedicines[sender.tag] as? [String:Any]
+            print(item as Any)
+            
+            self.delete_medicine_wb(str_disease_id: "\(item!["diseaseId"]!)",
+                                    str_supplier_id: "",
+                                    str_medicine_id: "\(item!["medicineId"]!)")
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler:{ (UIAlertAction)in
+            print("User click Dismiss button")
+        }))
+        
+        self.present(alert, animated: true, completion: {
+            print("completion block")
+        })
+        
+        
+        
+        
+        
+        
+        /*
+         Optional(["image": https://demo4.evirtualservices.net/ehealth/img/uploads/medicines/1639742398medicineName.png, "quantity": 1003, "diseaseId": 2, "subdetails": , "sm_id": 1, "name": (AENC) DISINFECTANT WATER-FREE HAND FOAM (POLIHEXANIDE) SOLUTION YANTAI DONGKE LVZHIYUAN DISINFECTION PHARMACEUTICAL CO., LTD., "price": 5, "supplierId": 14, "medicineId": 141061, "weight": ])
+         (lldb)
+         */
+        
+        /*let x : Int = self.dictGetClickedDiseaseData["DiseaseId"] as! Int
+         let myString = String(x)
+         
+         print(self.dictGetClickedDiseaseData as Any)
+         
+         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddMoreMedicinesId") as? AddMoreMedicines
+         
+         push!.getProfileInfo = "edit_medicine"
+         push!.getDictOfThatMedicine = self.dictGetClickedDiseaseData
+         
+         push!.getDieseaaseId = String(myString)
+         
+         self.navigationController?.pushViewController(push!, animated: true)*/
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -271,110 +349,25 @@ class manageInventoryVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     
     
-    
-    
     @objc func listOfAllMedicinesWB() {
-        self.arrListOfAllMedicines.removeAllObjects()
-        self.view.endEditing(true)
-        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
-        
-        // if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-        
-        // let x : Int = person["userId"] as! Int
-        // let myString = String(x)
-        
-        
-        let params =  ListMedicineList(action: "medicineproductlist")
-        
-        
-        print(params as Any)
-        
-        AF.request(APPLICATION_BASE_URL,
-                   method: .post,
-                   parameters: params,
-                   encoder: JSONParameterEncoder.default).responseJSON { response in
-            // debugPrint(response.result)
-            
-            switch response.result {
-            case let .success(value):
-                
-                let JSON = value as! NSDictionary
-                print(JSON as Any)
-                
-                var strSuccess : String!
-                strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                print(strSuccess as Any)
-                
-                if strSuccess == String("success") {
-                    print("yes")
-                    
-                    ERProgressHud.sharedInstance.hide()
-                    
-                    // arrListOfAllMedicines
-                    
-                    var ar : NSArray!
-                    ar = (JSON["data"] as! Array<Any>) as NSArray
-                    self.arrListOfAllMedicines.addObjects(from: ar as! [Any])
-                    
-                    self.tablView.delegate = self
-                    self.tablView.dataSource = self
-                    self.tablView.reloadData()
-                    
-                    /*var strSuccess2 : String!
-                     strSuccess2 = JSON["msg"]as Any as? String
-                     
-                     let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                     
-                     alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
-                     
-                     }))
-                     
-                     self.present(alert, animated: true)*/
-                    
-                } else {
-                    print("no")
-                    ERProgressHud.sharedInstance.hide()
-                    
-                    var strSuccess2 : String!
-                    strSuccess2 = JSON["msg"]as Any as? String
-                    
-                    let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                    
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    
-                    self.present(alert, animated: true)
-                    
-                    
-                    
-                    
-                }
-                
-            case let .failure(error):
-                print(error)
-                ERProgressHud.sharedInstance.hide()
-                
-                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
-            }
-        }
-        // }
-    }
-    
-    @objc func listOfAllMedicinesOfThatDiseaseWB() {
         self.arrListOfAllMedicines.removeAllObjects()
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             
-            let x : Int = self.dictGetClickedDiseaseData["DiseaseId"] as! Int
+            let x_2 : Int = self.dictGetClickedDiseaseData["DiseaseId"] as! Int
+            let myString_2 = String(x_2)
+            
+            let x : Int = person["userId"] as! Int
             let myString = String(x)
             
-            let x2 : Int = person["userId"] as! Int
-            let myString2 = String(x2)
+            // let params =  ListMedicineList(action: "medicineproductlist")
             
-            let params =  Medicine_Of_That_Disease(action: "medicineproductlist",
-                                                   supplierId:String(myString2),
-                                                   diseaseId: String(myString))
+            let params = list_of_all_medicines_product_list(action: "medicineproductlist",
+                                                            userId: String(myString),
+                                                            diseaseId: String(myString_2),
+                                                            supplierId: "")
             
             print(params as Any)
             
@@ -420,8 +413,6 @@ class manageInventoryVC: UIViewController, UITableViewDelegate, UITableViewDataS
                          
                          self.present(alert, animated: true)*/
                         
-                        
-                        
                     } else {
                         print("no")
                         ERProgressHud.sharedInstance.hide()
@@ -447,6 +438,175 @@ class manageInventoryVC: UIViewController, UITableViewDelegate, UITableViewDataS
                     // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
                 }
             }
+        }
+    }
+    
+    @objc func listOfAllMedicinesOfThatDiseaseWB() {
+        self.arrListOfAllMedicines.removeAllObjects()
+        self.view.endEditing(true)
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            let x : Int = self.dictGetClickedDiseaseData["DiseaseId"] as! Int
+            let myString = String(x)
+            
+            let x2 : Int = person["userId"] as! Int
+            let myString2 = String(x2)
+            
+            let params = list_of_all_medicines_product_list(action: "medicineproductlist",
+                                                            userId: String(myString),
+                                                            diseaseId: String(myString),
+                                                            supplierId: String(myString2))
+            
+            
+            
+            /*Medicine_Of_That_Disease(action: "medicineproductlist",
+             supplierId:String(myString2),
+             diseaseId: String(myString))*/
+            
+            print(params as Any)
+            
+            AF.request(APPLICATION_BASE_URL,
+                       method: .post,
+                       parameters: params,
+                       encoder: JSONParameterEncoder.default).responseJSON { response in
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    
+                    if strSuccess == String("success") {
+                        print("yes")
+                        
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        // arrListOfAllMedicines
+                        
+                        var ar : NSArray!
+                        ar = (JSON["data"] as! Array<Any>) as NSArray
+                        self.arrListOfAllMedicines.addObjects(from: ar as! [Any])
+                        
+                        self.tablView.delegate = self
+                        self.tablView.dataSource = self
+                        self.tablView.reloadData()
+                        
+                        /*var strSuccess2 : String!
+                         strSuccess2 = JSON["msg"]as Any as? String
+                         
+                         let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                         
+                         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
+                         
+                         }))
+                         
+                         self.present(alert, animated: true)*/
+                        
+                    } else {
+                        
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
+        }
+    }
+    
+    @objc func delete_medicine_wb(str_disease_id:String ,
+                                  str_supplier_id:String,
+                                  str_medicine_id:String) {
+        // self.arrListOfAllDoctors.removeAllObjects()
+        
+        self.view.endEditing(true)
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            let x : Int = person["userId"] as! Int
+            let myString = String(x)
+            
+            
+            let params = delete_medicine(action: "deletemedicine",
+                                         diseaseId: String(str_disease_id),
+                                         supplier_id: String(myString),
+                                         medicine_id: String(str_medicine_id))
+            
+            
+            print(params as Any)
+            
+            AF.request(APPLICATION_BASE_URL,
+                       method: .post,
+                       parameters: params,
+                       encoder: JSONParameterEncoder.default).responseJSON { response in
+                        // debugPrint(response.result)
+                        
+                        switch response.result {
+                        case let .success(value):
+                            
+                            let JSON = value as! NSDictionary
+                            print(JSON as Any)
+                            
+                            var strSuccess : String!
+                            strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                            print(strSuccess as Any)
+                            if strSuccess == String("success") {
+                                print("yes")
+                                
+                                if self.strWhereAreYouFrom == "supplierProfile" {
+
+                                    self.listOfAllMedicinesOfThatDiseaseWB()
+                                    
+                                } else {
+
+                                    self.listOfAllMedicinesWB()
+                                }
+                            } else {
+                                print("no")
+                                ERProgressHud.sharedInstance.hide()
+                                
+                                var strSuccess2 : String!
+                                strSuccess2 = JSON["msg"]as Any as? String
+                                
+                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                                
+                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                                
+                                self.present(alert, animated: true)
+                                
+                                
+                                
+                            }
+                            
+                        case let .failure(error):
+                            print(error)
+                            ERProgressHud.sharedInstance.hide()
+                            
+                        // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                        }
+                       }
         }
     }
     

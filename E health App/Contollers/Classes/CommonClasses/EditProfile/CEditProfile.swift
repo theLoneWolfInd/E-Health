@@ -49,6 +49,7 @@ class CEditProfile: UIViewController, UINavigationControllerDelegate, UIImagePic
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .white
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         
         //Looks for single or multiple taps.
@@ -494,6 +495,8 @@ extension CEditProfile: UITableViewDataSource {
         let backgroundView = UIView()
         backgroundView.backgroundColor = .clear
         cell.selectedBackgroundView = backgroundView
+        
+        cell.backgroundColor = .white
         
         // image one
         let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(CEditProfile.cellTappedMethod1(_:)))

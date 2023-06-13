@@ -211,7 +211,10 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
             
             if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
                 
-                if (person["role"] as! String) == "Hospital" {
+                if (person["role"] as! String) == "Hospital" ||
+                    (person["role"] as! String) == "Doctor" ||
+                    (person["role"] as! String) == "Lab" ||
+                    (person["role"] as! String) == "Pharmacy" {
                     
                     cell.lblSupplierName.text = (self.dictGetAllSupplierDetails["supplier_name"] as! String)
                     cell.lblPhone.text = (self.dictGetAllSupplierDetails["supplier_number"] as! String)
@@ -262,7 +265,24 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
             backgroundView.backgroundColor = .clear
             cell.selectedBackgroundView = backgroundView
             
-            if self.dictGetAllSupplierDetails["delivery_status"] is String {
+            var ar : NSArray!
+            ar = (self.dictGetAllSupplierDetails["orderproducts"] as! Array<Any>) as NSArray
+            
+            let item_2 = ar[0] as? [String:Any]
+            print(item_2 as Any)
+            
+            if "\(item_2!["delivery_status"]!)" == "" {
+                
+                cell.lblDeliveryStatus.text = "Not Delivered"
+                cell.imgMarkAsDelivered.isHidden = true
+                
+            } else {
+                
+                cell.lblDeliveryStatus.text = "Delivered"
+                cell.imgMarkAsDelivered.isHidden = false
+                
+            }
+            /*if self.dictGetAllSupplierDetails["delivery_status"] is String {
                 
                 if (self.dictGetAllSupplierDetails["delivery_status"] as! String) == "0" {
                     
@@ -293,7 +313,7 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
                     
                 }
                 
-            }
+            }*/
             
             return cell
             
@@ -361,7 +381,25 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
             backgroundView.backgroundColor = .clear
             cell.selectedBackgroundView = backgroundView
             
-            cell.lblDeliveryDate.text = (self.dictGetAllSupplierDetails["delivery_date"] as! String)
+            
+            
+            var ar : NSArray!
+            ar = (self.dictGetAllSupplierDetails["orderproducts"] as! Array<Any>) as NSArray
+            
+            let item_2 = ar[0] as? [String:Any]
+            print(item_2 as Any)
+            
+            if "\(item_2!["delivery_date"]!)" == "" {
+                
+                cell.lblDeliveryDate.text = "pending..."
+                cell.lblDeliveryDate.textColor = .systemRed
+                
+            } else {
+                
+                cell.lblDeliveryDate.text = "\(item_2!["delivery_date"]!)"
+                cell.lblDeliveryDate.textColor = .systemGreen
+                
+            }
             
             return cell
             
@@ -435,7 +473,30 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
             backgroundView.backgroundColor = .clear
             cell.selectedBackgroundView = backgroundView
             
-            if self.dictGetAllSupplierDetails["delivery_status"] is String {
+            var ar : NSArray!
+            ar = (self.dictGetAllSupplierDetails["orderproducts"] as! Array<Any>) as NSArray
+            
+            let item_2 = ar[0] as? [String:Any]
+            print(item_2 as Any)
+            
+            if "\(item_2!["delivery_status"]!)" == "" {
+                
+                cell.btnMarkAsDelivered.backgroundColor = .systemOrange
+                cell.btnMarkAsDelivered.isUserInteractionEnabled = true
+                // cell.btnMarkAsDelivered.setImage(UIImage.gif(name: "OnMyWay"), for: .normal)
+                cell.btnMarkAsDelivered.setTitle("Mark as Delivered", for: .normal)
+                cell.btnMarkAsDelivered.addTarget(self, action: #selector(markAsDeliveredPopup), for: .touchUpInside)
+                
+            } else {
+                
+                cell.btnMarkAsDelivered.backgroundColor = .systemGreen
+                cell.btnMarkAsDelivered.isUserInteractionEnabled = false
+                cell.btnMarkAsDelivered.setTitle("Delivered", for: .normal)
+                
+            }
+            
+            
+            /*if self.dictGetAllSupplierDetails["delivery_status"] is String {
                 
                 if (self.dictGetAllSupplierDetails["delivery_status"] as! String) == "0" {
                     
@@ -474,7 +535,7 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
                     
                 }
                 
-            }
+            }*/
             
             return cell
             
@@ -513,13 +574,18 @@ extension SupplierOrderHistoryDetails : UITableViewDelegate , UITableViewDataSou
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "please wait...")
         
+        // print(self.dictGetAllSupplierDetails as Any)
         
             let x : Int = (self.dictGetAllSupplierDetails["orderId"] as! Int)
             let myString = String(x)
+        
+        // let x_2 : Int = (self.dictGetAllSupplierDetails["supplierId"] as! Int)
+        // let myString_2 = String(x_2)
            
             let params =  Mark_As_Delivered(action: "orderstatus",
                                             orderId: String(myString),
-                                            delivery_status: "1")
+                                            delivery_status: "1",
+                                            supplierId:(self.dictGetAllSupplierDetails["supplierId"] as! String))
             
             
             print(params as Any)

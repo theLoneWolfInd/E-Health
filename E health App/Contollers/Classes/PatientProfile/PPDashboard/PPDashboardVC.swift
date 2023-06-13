@@ -9,15 +9,29 @@ import UIKit
 import SDWebImage
 import Alamofire
 import Firebase
+// MARK:- LOCATION -
+import CoreLocation
 
-class PPDashboardVC: UIViewController {
+class PPDashboardVC: UIViewController, CLLocationManagerDelegate {
+    
+    let locationManager = CLLocationManager()
+    
+    // MARK:- SAVE LOCATION STRING -
+    var strSaveLatitude:String! = "0"
+    var strSaveLongitude:String! = "0"
+    var strSaveCountryName:String!
+    var strSaveLocalAddress:String!
+    var strSaveLocality:String!
+    var strSaveLocalAddressMini:String!
+    var strSaveStateName:String!
+    var strSaveZipcodeName:String!
     
     var arr = ["Medical",
                "Appointment",
                "eHealth Card",
                "Prescription",
                "Edit Profile",
-               "Help"]
+               "Panic"]
     
     var imgArr = ["medical_yellow",
                   "appointment_yellow",
@@ -85,7 +99,7 @@ class PPDashboardVC: UIViewController {
         self.sideBarMenuClick()
         
         
-        
+        self.iAmHereForLocationPermission()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +107,81 @@ class PPDashboardVC: UIViewController {
         
         self.fetchDynamicData()
         
+    }
+    
+    @objc func iAmHereForLocationPermission() {
+        // Ask for Authorisation from the User.
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                print("No access")
+                self.strSaveLatitude = "0"
+                self.strSaveLongitude = "0"
+                
+            case .authorizedAlways, .authorizedWhenInUse:
+                print("Access")
+                
+                locationManager.delegate = self
+                locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+                locationManager.startUpdatingLocation()
+                
+            @unknown default:
+                break
+            }
+        }
+    }
+    
+    // MARK:- GET CUSTOMER LOCATION -
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
+        print("locations = \(locValue.latitude) \(locValue.longitude)")
+        
+        // let indexPath = IndexPath.init(row: 0, section: 0)
+        // let cell = self.tablView.cellForRow(at: indexPath) as! HospitalNewLabeRegistrationTableCell
+        
+        let location = CLLocation(latitude: locValue.latitude, longitude: locValue.longitude)
+        location.fetchCityAndCountry { city, country, zipcode,localAddress,localAddressMini,locality, error in
+            guard let city = city, let country = country,let zipcode = zipcode,let localAddress = localAddress,let localAddressMini = localAddressMini,let locality = locality, error == nil else { return }
+            
+            self.strSaveCountryName         = country
+            self.strSaveStateName           = city
+            self.strSaveZipcodeName         = zipcode
+            
+            self.strSaveLocalAddress        = localAddress
+            self.strSaveLocality            = locality
+            self.strSaveLocalAddressMini    = localAddressMini
+            
+            //print(self.strSaveLocality+" "+self.strSaveLocalAddress+" "+self.strSaveLocalAddressMini)
+            
+            let doubleLat = locValue.latitude
+            let doubleStringLat = String(doubleLat)
+            
+            let doubleLong = locValue.longitude
+            let doubleStringLong = String(doubleLong)
+            
+            self.strSaveLatitude = String(doubleStringLat)
+            self.strSaveLongitude = String(doubleStringLong)
+            
+            print("local address ==> "+localAddress as Any) // south west delhi
+            print("local address mini ==> "+localAddressMini as Any) // new delhi
+            print("locality ==> "+locality as Any) // sector 10 dwarka
+            
+            print(self.strSaveCountryName as Any) // india
+            print(self.strSaveStateName as Any) // new delhi
+            print(self.strSaveZipcodeName as Any) // 110075
+            
+            //MARK:- STOP LOCATION -
+            self.locationManager.stopUpdatingLocation()
+            
+            // cell.txtAddress.text = locality+", "+localAddress+", "+self.strSaveZipcodeName
+            
+            // self.findMyStateTaxWB()
+        }
     }
     
     @objc func sideBarMenuClick() {
@@ -155,11 +244,12 @@ class PPDashboardVC: UIViewController {
             
             let x : Int = person["userId"] as! Int
             let myString = String(x)
-            
+             
             let params = send_panic_notification(action: "sendpanic",
                                                  userId: String(myString),
-                                                 latitude: "28.587236583316123",
-                                                 longitude: "77.06067352815973")
+                                                 latitude: String(self.strSaveLatitude),
+                                                 longitude: String(self.strSaveLongitude)
+            )
             
             
             print(params as Any)
@@ -225,7 +315,7 @@ class PPDashboardVC: UIViewController {
     
 }
 
-extension PPDashboardVC: UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout{
+extension PPDashboardVC: UICollectionViewDelegate , UICollectionViewDataSource , UICollectionViewDelegateFlowLayout {
     
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -247,7 +337,7 @@ extension PPDashboardVC: UICollectionViewDelegate , UICollectionViewDataSource ,
         cell.lblDashboard.text = arr[indexPath.row]
         cell.imgDashboard.image = UIImage(named: imgArr[indexPath.row])
         
-        if indexPath.row == 5 {
+        /*if indexPath.row == 5 {
             
             cell.imgDashboard.isHidden = true
             cell.imgPanicFullImage.isHidden = false
@@ -257,13 +347,13 @@ extension PPDashboardVC: UICollectionViewDelegate , UICollectionViewDataSource ,
              
             
         } else {
-            
+            */
             cell.imgDashboard.isHidden = false
             cell.imgPanicFullImage.isHidden = true
             cell.lblDashboard.isHidden = false
             cell.viewCellBG.isHidden = false
             
-        }
+        // }
         
         // cell.imgDashboard.layer.cornerRadius = cell.imgDashboard.frame.height/2
         // cell.imgDashboard.image = UIImage(named: imgArr[indexPath.row])

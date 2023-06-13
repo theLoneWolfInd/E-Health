@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-let APPLICATION_BASE_URL = "https://demo4.evirtualservices.net/ehealth/services/index/"
+let APPLICATION_BASE_URL = "https://aehm.info/services/index"
 
 let MY_DEVICE = "iOS"
 
@@ -16,6 +16,12 @@ let text_pharmacy = "Pharmacy"
 let text_lab = "Lab"
 let text_hospital = "Hospital"
 let text_patient = "Patient"
+
+
+struct login_user_data: Decodable {
+    var login_id: String! = "dishu"
+}
+
 
 func delay(_ delay: Double, block:@escaping ()->()) {
     let nSecDispatchTime = DispatchTime.now() + delay;
@@ -25,7 +31,7 @@ func delay(_ delay: Double, block:@escaping ()->()) {
 
 class Utils: NSObject {
     
-    class func txtUitextField(textField:UITextField,placeholderName:String,setLeftPadding:CGFloat){
+    class func txtUitextField(textField:UITextField,placeholderName:String,setLeftPadding:CGFloat) {
         
         textField.backgroundColor = .white
         //textField.layer.shadowColor = UIColor.lightGray.cgColor
@@ -38,6 +44,7 @@ class Utils: NSObject {
         textField.layer.borderWidth = 1
         textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.setLeftPaddingPoints(setLeftPadding)
+        textField.textColor = .black
         textField.attributedPlaceholder = NSAttributedString(string:placeholderName, attributes:[NSAttributedString.Key.foregroundColor: UIColor.lightGray])
     }
     
@@ -298,4 +305,33 @@ extension CLLocation {
         CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality,$0?.first?.country, $0?.first?.postalCode,$0?.first?.administrativeArea,$0?.first?.locality,$0?.first?.subLocality,$0?.first?.isoCountryCode, $1) }
     }
     
+}
+
+
+extension UIViewController {
+    func showInputDialog(title:String? = nil,
+                         subtitle:String? = nil,
+                         actionTitle:String? = "Add",
+                         cancelTitle:String? = "Cancel",
+                         inputPlaceholder:String? = nil,
+                         inputKeyboardType:UIKeyboardType = UIKeyboardType.default,
+                         cancelHandler: ((UIAlertAction) -> Swift.Void)? = nil,
+                         actionHandler: ((_ text: String?) -> Void)? = nil) {
+        
+        let alert = UIAlertController(title: title, message: subtitle, preferredStyle: .alert)
+        alert.addTextField { (textField:UITextField) in
+            textField.placeholder = inputPlaceholder
+            textField.keyboardType = inputKeyboardType
+        }
+        alert.addAction(UIAlertAction(title: actionTitle, style: .default, handler: { (action:UIAlertAction) in
+            guard let textField =  alert.textFields?.first else {
+                actionHandler?(nil)
+                return
+            }
+            actionHandler?(textField.text)
+        }))
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel, handler: cancelHandler))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
 }

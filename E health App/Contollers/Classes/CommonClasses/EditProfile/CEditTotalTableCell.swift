@@ -19,11 +19,28 @@ class CEditTotalTableCell: UITableViewCell {
     @IBOutlet weak var txtEmail:UITextField! {
         didSet {
             txtEmail.isUserInteractionEnabled = false
+            txtEmail.backgroundColor = .white
+            txtEmail.textColor = .black
         }
     }
-    @IBOutlet weak var txtUsername:UITextField!
-    @IBOutlet weak var txtPhoneNumber:UITextField!
-    @IBOutlet weak var txtAddress:UITextField!
+    @IBOutlet weak var txtUsername:UITextField! {
+        didSet {
+            txtUsername.backgroundColor = .white
+            txtUsername.textColor = .black
+        }
+    }
+    @IBOutlet weak var txtPhoneNumber:UITextField! {
+        didSet {
+            txtPhoneNumber.backgroundColor = .white
+            txtPhoneNumber.textColor = .black
+        }
+    }
+    @IBOutlet weak var txtAddress:UITextField! {
+        didSet {
+            txtAddress.backgroundColor = .white
+            txtAddress.textColor = .black
+        }
+    }
     
     @IBOutlet weak var btnUpdate:UIButton! {
         didSet {

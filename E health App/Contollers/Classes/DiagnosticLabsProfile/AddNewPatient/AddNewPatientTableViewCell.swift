@@ -26,6 +26,7 @@ class AddNewPatientTableViewCell: UITableViewCell {
     @IBOutlet weak var btnDor: UIButton!
     @IBOutlet weak var btnDOB: UIButton!
     
+    @IBOutlet weak var btn_disease: UIButton!
     @IBOutlet weak var btnCountry: UIButton!
     
     @IBOutlet weak var btnGender: UIButton!
@@ -69,6 +70,15 @@ class AddNewPatientTableViewCell: UITableViewCell {
         didSet {
             
             Utils.txtUitextField(textField: txtMiddleName, placeholderName: "Middle Name", setLeftPadding: 20 )
+            txtMiddleName.backgroundColor = .white
+        }
+    }
+    
+    @IBOutlet weak var txt_disease_name: UITextField!{
+        
+        didSet {
+            
+            Utils.txtUitextField(textField: txt_disease_name, placeholderName: "Disease name", setLeftPadding: 20 )
             txtMiddleName.backgroundColor = .white
         }
     }

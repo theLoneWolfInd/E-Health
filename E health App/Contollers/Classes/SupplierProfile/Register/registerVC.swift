@@ -76,8 +76,30 @@ class registerVC: UIViewController,UITableViewDelegate, UITableViewDataSource , 
         
         self.iAmHereForLocationPermission()
         
+        
+        
         self.countryListWebSer()
          
+    }
+    
+    @objc func old_pass_eye_click_method() {
+        let indexPath = IndexPath.init(row: 0, section: 0)
+        let cell = self.tablView.cellForRow(at: indexPath) as! registerTableViewCell
+        
+        if cell.btn_eye_old_pass.tag == 0 {
+            
+            cell.btn_eye_old_pass.tag = 1
+            cell.txtPassword.isSecureTextEntry = false
+            cell.btn_eye_old_pass.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+            
+        } else {
+            
+            cell.btn_eye_old_pass.tag = 0
+            cell.txtPassword.isSecureTextEntry = true
+            cell.btn_eye_old_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+            
+        }
+        
     }
     
     @objc func iAmHereForLocationPermission() {
@@ -231,7 +253,7 @@ class registerVC: UIViewController,UITableViewDelegate, UITableViewDataSource , 
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         
@@ -580,6 +602,8 @@ class registerVC: UIViewController,UITableViewDelegate, UITableViewDataSource , 
         cell.selectedBackgroundView = backgroundView
         cell.btnSignUp.addTarget(self, action: #selector(registerPharmacyWB), for: .touchUpInside)
         cell.btnCountry.addTarget(self, action: #selector(btnCountryPress), for: .touchUpInside)
+        
+        cell.btn_eye_old_pass.addTarget(self, action: #selector(old_pass_eye_click_method), for: .touchUpInside)
         
         return cell
         

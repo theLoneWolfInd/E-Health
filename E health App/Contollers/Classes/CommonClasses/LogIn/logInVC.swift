@@ -11,11 +11,13 @@ import Alamofire
 // MARK:- LOCATION -
 import CoreLocation
 
-class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate {
+class logInVC: UIViewController , UITextFieldDelegate , CLLocationManagerDelegate {
     
     var strUserLoginProfile:String!
     
     let locationManager = CLLocationManager()
+    
+    var str_user_device_token:String! = ""
     
     // MARK:- SAVE LOCATION STRING -
     var strSaveLatitude:String! = "0"
@@ -29,9 +31,9 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
     
     @IBOutlet weak var viewNavigationbar:UIView!
     @IBOutlet weak var btnNavigationBack:UIButton!
-    @IBOutlet weak var lblNavationbar:UILabel!{
+    
+    @IBOutlet weak var lblNavationbar:UILabel! {
         didSet {
-            
             lblNavationbar.text = "SIGN IN"
         }
     }
@@ -51,25 +53,32 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
             
             Utils.txtUitextField(textField: txtEmail, placeholderName: "Email", setLeftPadding: 20)
             
-            if let myImage = UIImage(named: "user"){
-                txtEmail.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-            }
+            /*if let myImage = UIImage(named: "user") {
+             txtEmail.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+             }*/
             
             txtEmail.delegate = self
             
         }
     }
+    
+    @IBOutlet weak var btn_eye_old_pass:UIButton! {
+        didSet {
+            btn_eye_old_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+        }
+    }
+    
     @IBOutlet weak var txtPassword:UITextField!{
         
         didSet {
             
-            Utils.txtUitextField(textField: txtPassword, placeholderName: "Password", setLeftPadding: 20 )
+            Utils.txtUitextField(textField: txtPassword, placeholderName: "Password", setLeftPadding: 20)
             
-            if let myImage = UIImage(systemName: "lock.fill"){
-                
-                txtPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-            }
-            
+            /*if let myImage = UIImage(systemName: "lock.fill"){
+             
+             txtPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+             }*/
+            txtPassword.isSecureTextEntry = true
             txtPassword.delegate = self
         }
     }
@@ -116,6 +125,19 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
         btnForgotPassword.addTarget(self, action: #selector(btnForgotPasswordPress), for: .touchUpInside)
         self.view.backgroundColor = .white
         
+        
+        self.btn_eye_old_pass.addTarget(self, action: #selector(old_pass_eye_click_method), for: .touchUpInside)
+        
+        let defaults = UserDefaults.standard
+        if let myString = defaults.string(forKey: "key_my_device_token") {
+            print("defaults savedString: \(myString)")
+            
+            self.str_user_device_token = "\(myString)"
+            
+        }
+        
+        
+        
         if self.strUserLoginProfile == "Patient" {
             self.btnSignUp.isHidden = true
         } else {
@@ -124,6 +146,24 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
         btnSignUp.addTarget(self, action: #selector(btnSignUpPress), for: .touchUpInside)
         
         self.iAmHereForLocationPermission()
+        
+    }
+    
+    @objc func old_pass_eye_click_method() {
+        
+        if self.btn_eye_old_pass.tag == 0 {
+            
+            self.btn_eye_old_pass.tag = 1
+            self.txtPassword.isSecureTextEntry = false
+            self.btn_eye_old_pass.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+            
+        } else {
+            
+            self.btn_eye_old_pass.tag = 0
+            self.txtPassword.isSecureTextEntry = true
+            self.btn_eye_old_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+            
+        }
         
     }
     
@@ -153,6 +193,7 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
             }
         }
     }
+    
     // MARK:- GET CUSTOMER LOCATION -
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
@@ -165,13 +206,13 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
         location.fetchCityAndCountry { city, country, zipcode,localAddress,localAddressMini,locality, error in
             guard let city = city, let country = country,let zipcode = zipcode,let localAddress = localAddress,let localAddressMini = localAddressMini,let locality = locality, error == nil else { return }
             
-            self.strSaveCountryName     = country
-            self.strSaveStateName       = city
-            self.strSaveZipcodeName     = zipcode
+            self.strSaveCountryName         = country
+            self.strSaveStateName           = city
+            self.strSaveZipcodeName         = zipcode
             
-            self.strSaveLocalAddress     = localAddress
-            self.strSaveLocality         = locality
-            self.strSaveLocalAddressMini = localAddressMini
+            self.strSaveLocalAddress        = localAddress
+            self.strSaveLocality            = locality
+            self.strSaveLocalAddressMini    = localAddressMini
             
             //print(self.strSaveLocality+" "+self.strSaveLocalAddress+" "+self.strSaveLocalAddressMini)
             
@@ -207,15 +248,14 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
     
     @objc func btnForgotPasswordPress() {
         
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPOrderDetailsVC") as? PPOrderDetailsVC
-        
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "forgotPasswordVC") as? forgotPasswordVC
         self.navigationController?.pushViewController(push!, animated: true)
+        
     }
     
     @objc func btnSignInPress() {
         
         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "dashboardVC") as? dashboardVC
-        
         self.navigationController?.pushViewController(push!, animated: true)
         
     }
@@ -234,9 +274,6 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
             
         }
         
-        
-        
-        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -246,7 +283,7 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
     
     // MARK:- VALIDATION BEFORE LOGIN -
     @objc func callBeforeLogin() {
-         
+        
         if String(txtEmail.text!) == "" {
             self.fieldShoulNotBeEmptyPopup(strTitle: "Name")
         } else if String(txtPassword.text!) == "" {
@@ -270,127 +307,132 @@ class logInVC: UIViewController,UITextFieldDelegate , CLLocationManagerDelegate 
         self.view.endEditing(true)
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
-        let defaults = UserDefaults.standard
-        if let myString = defaults.string(forKey: "key_my_device_token") {
-            print("defaults savedString: \(myString)")
+        let params = LoginParam(action: "login",
+                                login_id: String(self.txtEmail.text!),
+                                password: String(self.txtPassword.text!),
+                                device: MY_DEVICE,
+                                deviceToken: String(self.str_user_device_token),
+                                latitude: String(self.strSaveLatitude),
+                                longitude: String(self.strSaveLongitude))
+        
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
             
-            /*
-             self.strSaveLatitude = String(doubleStringLat)
-             self.strSaveLongitude = String(doubleStringLong)
-             */
-            
-            let params = LoginParam(action: "login",
-                                    login_id: String(self.txtEmail.text!),
-                                    password: String(self.txtPassword.text!),
-                                    device: MY_DEVICE,
-                                    deviceToken: "\(myString)",
-                                    latitude: String(self.strSaveLatitude),
-                                    longitude: String(self.strSaveLongitude))
-            
-            
-            print(params as Any)
-            
-            AF.request(APPLICATION_BASE_URL,
-                       method: .post,
-                       parameters: params,
-                       encoder: JSONParameterEncoder.default).responseJSON { response in
-                // debugPrint(response.result)
+            switch response.result {
+            case let .success(value):
                 
-                switch response.result {
-                case let .success(value):
+                let JSON = value as! NSDictionary
+                print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                print(strSuccess as Any)
+                if strSuccess == String("success") {
+                    print("yes")
                     
-                    let JSON = value as! NSDictionary
-                    print(JSON as Any)
+                    ERProgressHud.sharedInstance.hide()
                     
-                    var strSuccess : String!
-                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                    print(strSuccess as Any)
-                    if strSuccess == String("success") {
-                        print("yes")
+                    var dict: Dictionary<AnyHashable, Any>
+                    dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                    
+                    let defaults = UserDefaults.standard
+                    defaults.setValue(dict, forKey: "keyLoginFullData")
+                    
+                    
+                    if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]  {
                         
-                        ERProgressHud.sharedInstance.hide()
+                        print(person as Any)
                         
-                        var dict: Dictionary<AnyHashable, Any>
-                        dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                        
-                        let defaults = UserDefaults.standard
-                        defaults.setValue(dict, forKey: "keyLoginFullData")
-                        
-                        
-                        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]  {
+                        if (person["role"] as! String) == "Hospital" {
                             
-                            print(person as Any)
-                            
-                            if (person["role"] as! String) == "Hospital" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDashboardVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            } else if (person["role"] as! String) == "Patient" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPDashboardVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            } else if (person["role"] as! String) == "Doctor" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DPDashboardVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            } else if (person["role"] as! String) == "Supplier" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "dashboardVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            } else if (person["role"] as! String) == "Lab" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DashboardDLPVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            } else if (person["role"] as! String) == "Pharmacy" {
-                                
-                                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DashboardDLPVC")
-                                self.navigationController?.pushViewController(push, animated: true)
-                                
-                            }
-                            
-                        }
-                        
-                    } else {
-                        print("no")
-                        ERProgressHud.sharedInstance.hide()
-                        
-                        var strSuccess2 : String!
-                        strSuccess2 = JSON["msg"]as Any as? String
-                        
-                        if strSuccess2 == "Your Account is Inactive. Please contact admin.!!" ||
-                            strSuccess2 == "Your Account is Inactive. Please contact admin.!" ||
-                            strSuccess2 == "Your Account is Inactive. Please contact admin." {
-                            
-                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "adminApprovalVC")
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDashboardVC")
                             self.navigationController?.pushViewController(push, animated: true)
                             
-                        } else {
+                        } else if (person["role"] as! String) == "Patient" {
                             
-                            let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPDashboardVC")
+                            self.navigationController?.pushViewController(push, animated: true)
                             
-                            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        } else if (person["role"] as! String) == "Doctor" {
                             
-                            self.present(alert, animated: true)
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DPDashboardVC")
+                            self.navigationController?.pushViewController(push, animated: true)
+                            
+                        } else if (person["role"] as! String) == "Supplier" {
+                            
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "dashboardVC")
+                            self.navigationController?.pushViewController(push, animated: true)
+                            
+                        } else if (person["role"] as! String) == "Lab" {
+                            
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DashboardDLPVC")
+                            self.navigationController?.pushViewController(push, animated: true)
+                            
+                        } else if (person["role"] as! String) == "Pharmacy" {
+                            
+                            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "DashboardDLPVC")
+                            self.navigationController?.pushViewController(push, animated: true)
                             
                         }
                         
+                    }
+                    
+                } else {
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    if strSuccess2 == "Your Account is Inactive. Please contact admin.!!" ||
+                        strSuccess2 == "Your Account is Inactive. Please contact admin.!" ||
+                        strSuccess2 == "Your Account is Inactive. Please contact admin." {
                         
+                        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "adminApprovalVC")
+                        self.navigationController?.pushViewController(push, animated: true)
+                        
+                    } else {
+                        
+                        /*let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                         
+                         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                         
+                         self.present(alert, animated: true)*/
+                        
+                        
+                        let alert = NewYorkAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), style: .alert)
+                        
+                        alert.addImage(UIImage.gif(name: "gif_alert"))
+                        
+                        let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                            
+                            // SPConfetti.stopAnimating()
+                            
+                            // self.navigationController?.popViewController(animated: true)
+                        }
+                        alert.addButtons([cancel])
+                        
+                        self.present(alert, animated: true)
                         
                         
                     }
                     
-                case let .failure(error):
-                    print(error)
-                    ERProgressHud.sharedInstance.hide()
                     
-                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
                 }
+                
+            case let .failure(error):
+                print(error)
+                ERProgressHud.sharedInstance.hide()
+                
+                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
             }
         }
+        
     }
 }

@@ -86,6 +86,8 @@ class selectDiseaseVC: UIViewController , UITableViewDelegate , UITableViewDataS
         backgroundView.backgroundColor = .clear
         cell.selectedBackgroundView = backgroundView
         
+        cell.backgroundColor = .white
+        
         let item = self.arrListOfAllDisease[indexPath.row] as? [String:Any]
         // print(item as Any)
         /*
@@ -105,11 +107,36 @@ class selectDiseaseVC: UIViewController , UITableViewDelegate , UITableViewDataS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let item = self.arrListOfAllDisease[indexPath.row] as? [String:Any]
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
-        push!.strWhereAreYouFrom = "supplierProfile"
-        push!.dictGetClickedDiseaseData = item as NSDictionary?
-        self.navigationController?.pushViewController(push!, animated: true)
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            // let str:String = person["role"] as! String
+        
+            if (person["role"] as! String) == "Supplier" {
+                
+                let item = self.arrListOfAllDisease[indexPath.row] as? [String:Any]
+                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
+                
+                push!.strWhereAreYouFrom = "supplierProfile"
+                push!.dictGetClickedDiseaseData = item as NSDictionary?
+                
+                self.navigationController?.pushViewController(push!, animated: true)
+                
+                
+                
+            } else {
+                
+                let item = self.arrListOfAllDisease[indexPath.row] as? [String:Any]
+                let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
+                
+                // push!.strWhereAreYouFrom = "supplierProfile"
+                push!.dictGetClickedDiseaseData = item as NSDictionary?
+                
+                self.navigationController?.pushViewController(push!, animated: true)
+                
+            }
+            
+        }
+        
         
         
     }

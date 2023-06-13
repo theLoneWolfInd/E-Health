@@ -329,6 +329,8 @@ extension ListOfAllMedicines : UITableViewDelegate , UITableViewDataSource {
         let ok = NewYorkButton(title: "Yes, Select", style: .default) { _ in
             print("Tapped OK")
             
+            ERProgressHud.sharedInstance.hide()
+            
             let x : Int = (item!["medicineId"] as! Int)
             let myString = String(x)
             
@@ -342,7 +344,10 @@ extension ListOfAllMedicines : UITableViewDelegate , UITableViewDataSource {
         }
         
         ok.setDynamicColor(.purple)
-        let cancel = NewYorkButton(title: "Cancel", style: .cancel)
+        let cancel = NewYorkButton(title: "Cancel", style: .cancel) {
+            _ in
+            ERProgressHud.sharedInstance.hide()
+        }
         alert.addButtons([ok, cancel])
 
         present(alert, animated: true)

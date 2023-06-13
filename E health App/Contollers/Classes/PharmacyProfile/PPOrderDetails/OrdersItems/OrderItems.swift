@@ -90,22 +90,56 @@ extension OrderItems: UITableViewDataSource, UITableViewDelegate {
                           
             print("Yes, it's a String")
           
-            cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+(item!["price"] as! String), for: .normal)
-            
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+(item!["price"] as! String), for: .normal)
+            cell.lbl_medicine_price.text = (item!["price"] as! String)
+                                                                               
         } else if item!["price"] is Int {
           
             print("It is Integer")
           
             let x : Int = (item!["price"] as! Int)
             let myString = String(x)
-            cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+myString, for: .normal)
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+myString, for: .normal)
+            cell.lbl_medicine_price.text = myString
             
         } else {
             
             let temp:NSNumber = item!["price"] as! NSNumber
             let tempString = temp.stringValue
-            cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+tempString, for: .normal)
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+tempString, for: .normal)
+            
+            cell.lbl_medicine_price.text = tempString
+            
         }
+        
+        // quantity
+        if item!["quantity"] is String {
+                          
+            print("Yes, it's a String")
+          
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+(item!["price"] as! String), for: .normal)
+            cell.lbl_medicine_quantity.text = myString2
+                                                                               
+        } else if item!["quantity"] is Int {
+          
+            print("It is Integer")
+          
+            let x : Int = (item!["quantity"] as! Int)
+            let myString = String(x)
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+myString, for: .normal)
+            cell.lbl_medicine_quantity.text = myString
+            
+        } else {
+            
+            let temp:NSNumber = item!["quantity"] as! NSNumber
+            let tempString = temp.stringValue
+            // cell.btnQuantity.setTitle("Quantity : "+myString2+"|| Price : "+tempString, for: .normal)
+            
+            cell.lbl_medicine_quantity.text = tempString
+            
+        }
+        
+        
         
         cell.imgProfile.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
         cell.imgProfile.sd_setImage(with: URL(string: (item!["image"] as! String)), placeholderImage: UIImage(named: "1024"))
@@ -121,7 +155,7 @@ extension OrderItems: UITableViewDataSource, UITableViewDelegate {
         if (item!["name"] as! String).count > 80 {
             return UITableView.automaticDimension
         } else {
-            return 110
+            return 70
             
         }
         

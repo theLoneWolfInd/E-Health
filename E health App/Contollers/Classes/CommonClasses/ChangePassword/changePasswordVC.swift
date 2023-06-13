@@ -20,15 +20,18 @@ class changePasswordVC: UIViewController,UITextFieldDelegate {
         }
     }
 
+    @IBOutlet weak var btn_eye_old_pass:UIButton!
+    @IBOutlet weak var btn_eye_pass:UIButton!
+    @IBOutlet weak var btn_eye_confirm_pass:UIButton!
     
     @IBOutlet weak var txtCurrentPassword:UITextField!{
         didSet {
             
             Utils.txtUitextField(textField: txtCurrentPassword, placeholderName: "Current Password", setLeftPadding: 20)
             
-            if let myImage = UIImage(systemName: "eye"){
-                txtCurrentPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-            }
+//            if let myImage = UIImage(systemName: "eye"){
+//                txtCurrentPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+//            }
     
             txtCurrentPassword.delegate = self
             
@@ -40,10 +43,10 @@ class changePasswordVC: UIViewController,UITextFieldDelegate {
         
         Utils.txtUitextField(textField: txtNewPassword, placeholderName: "New Password", setLeftPadding: 20 )
         
-        if let myImage = UIImage(systemName: "eye"){
-            
-            txtNewPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-        }
+//        if let myImage = UIImage(systemName: "eye"){
+//
+//            txtNewPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+//        }
         
         txtNewPassword.delegate = self
     }
@@ -55,10 +58,10 @@ class changePasswordVC: UIViewController,UITextFieldDelegate {
         
         Utils.txtUitextField(textField: txtConfirmNewPassword, placeholderName: "Confirm Password", setLeftPadding: 20 )
         
-        if let myImage = UIImage(systemName: "eye"){
-            
-            txtConfirmNewPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
-        }
+//        if let myImage = UIImage(systemName: "eye"){
+//
+//            txtConfirmNewPassword.withImage(direction: .Right, image: myImage, colorSeparator: UIColor.white, colorBorder: UIColor.black)
+//        }
         
         txtConfirmNewPassword.delegate = self
     }
@@ -85,9 +88,68 @@ class changePasswordVC: UIViewController,UITextFieldDelegate {
         
         self.btnUpdatePassword.addTarget(self, action: #selector(validationBeforeChangePassword), for: .touchUpInside)
         
+        self.btn_eye_old_pass.addTarget(self, action: #selector(old_pass_eye_click_method), for: .touchUpInside)
+        
+        self.btn_eye_pass.addTarget(self, action: #selector(pass_eye_click_method), for: .touchUpInside)
+        
+        self.btn_eye_confirm_pass.addTarget(self, action: #selector(pass_confirm_eye_click_method), for: .touchUpInside)
+        
         self.btnDashboardMenuPress()
     }
 
+    @objc func old_pass_eye_click_method() {
+        
+        if self.btn_eye_old_pass.tag == 0 {
+            
+            self.btn_eye_old_pass.tag = 1
+            self.txtCurrentPassword.isSecureTextEntry = false
+            self.btn_eye_old_pass.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+            
+        } else {
+            
+            self.btn_eye_old_pass.tag = 0
+            self.txtCurrentPassword.isSecureTextEntry = true
+            self.btn_eye_old_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+            
+        }
+        
+    }
+    
+    @objc func pass_eye_click_method() {
+     
+        if self.btn_eye_pass.tag == 0 {
+            
+            self.btn_eye_pass.tag = 1
+            self.txtNewPassword.isSecureTextEntry = false
+            self.btn_eye_pass.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+            
+        } else {
+            
+            self.btn_eye_pass.tag = 0
+            self.txtNewPassword.isSecureTextEntry = true
+            self.btn_eye_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+            
+        }
+        
+    }
+    
+    @objc func pass_confirm_eye_click_method() {
+        
+        if self.btn_eye_confirm_pass.tag == 0 {
+            
+            self.btn_eye_confirm_pass.tag = 1
+            self.txtConfirmNewPassword.isSecureTextEntry = false
+            self.btn_eye_confirm_pass.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+            
+        } else {
+            
+            self.btn_eye_confirm_pass.tag = 0
+            self.txtConfirmNewPassword.isSecureTextEntry = true
+            self.btn_eye_confirm_pass.setImage(UIImage(systemName: "eye"), for: .normal)
+            
+        }
+        
+    }
     @objc func btnDashboardMenuPress(){
         
         if revealViewController() != nil {

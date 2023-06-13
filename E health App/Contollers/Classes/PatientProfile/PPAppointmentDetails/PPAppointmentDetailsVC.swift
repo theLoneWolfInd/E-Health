@@ -77,63 +77,86 @@ class PPAppointmentDetailsVC: UIViewController {
         
         // print(self.dictGetAppointmentDetails as Any)
         
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddImagesId") as? AddImages
+        let item = (self.dictGetAppointmentDetails["notes"] as! Array<Any>) as NSArray
+        // print(item as Any)
         
-        push!.getAppointmentDetailsIn = self.dictGetAppointmentDetails
-        push!.strShowImageDetailsFor = "test"
-        
-        // PATIENT
-        let x : Int = (self.dictGetAppointmentDetails["userId"] as! Int)
-        let myString = String(x)
-        push!.strSavePatientId = String(myString)
-        
-        // DOCTOR
-        let x2 : Int = (self.dictGetAppointmentDetails["doctorId"] as! Int)
-        let myString2 = String(x2)
-        push!.strSaveDoctorId = String(myString2)
-        
-        // APPOINTMENT
-        let x5 : Int = (self.dictGetAppointmentDetails["appointmentId"] as! Int)
-        let myString5 = String(x5)
-        push!.strSaveAppointmentId = String(myString5)
-        
-        // HOSPITAL
-        if self.dictGetAppointmentDetails["hospitalId"] is String {
-                          
-            push!.strSaveHospitalId = String("")
+        //
+        if item.count == 0 {
             
-        } else if self.dictGetAppointmentDetails["hospitalId"] is Int {
+            let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No Test found"), style: .alert)
             
-            let x4 : Int = (self.dictGetAppointmentDetails["hospitalId"] as! Int)
-            let myString4 = String(x4)
-            push!.strSaveHospitalId = String(myString4)
+            alert.addImage(UIImage.gif(name: "gif_alert"))
+            
+            let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                
+                
+            }
+            alert.addButtons([cancel])
+            
+            self.present(alert, animated: true)
+            
+        } else {
+           
+            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddImagesId") as? AddImages
+            
+            push!.getAppointmentDetailsIn = self.dictGetAppointmentDetails
+            push!.strShowImageDetailsFor = "test"
+            
+            // PATIENT
+            let x : Int = (self.dictGetAppointmentDetails["userId"] as! Int)
+            let myString = String(x)
+            push!.strSavePatientId = String(myString)
+            
+            // DOCTOR
+            let x2 : Int = (self.dictGetAppointmentDetails["doctorId"] as! Int)
+            let myString2 = String(x2)
+            push!.strSaveDoctorId = String(myString2)
+            
+            // APPOINTMENT
+            let x5 : Int = (self.dictGetAppointmentDetails["appointmentId"] as! Int)
+            let myString5 = String(x5)
+            push!.strSaveAppointmentId = String(myString5)
+            
+            // HOSPITAL
+            if self.dictGetAppointmentDetails["hospitalId"] is String {
+                              
+                push!.strSaveHospitalId = String("")
+                
+            } else if self.dictGetAppointmentDetails["hospitalId"] is Int {
+                
+                let x4 : Int = (self.dictGetAppointmentDetails["hospitalId"] as! Int)
+                let myString4 = String(x4)
+                push!.strSaveHospitalId = String(myString4)
+                
+            }
+            
+            self.navigationController?.pushViewController(push!, animated: true)
             
         }
         
-        self.navigationController?.pushViewController(push!, animated: true)
+        
     }
     
     // MARK:- DOCTOR PRISCRIPTION -
     @objc func doctorPriscriptionClick() {
-        // self.dictGetAppointmentDetails
         
-        /*let x : Int = (self.dictGetAppointmentDetails["doctorId"] as! Int)
-        let myString = String(x)
+        let item = (self.dictGetAppointmentDetails["prescription"] as! Array<Any>) as NSArray
         
-        let x2 : Int = (self.dictGetAppointmentDetails["hospitalId"] as! Int)
-        let myString2 = String(x2)
-        
-        
-        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ShowImageId") as? ShowImage
-        
-        push!.strDoctorId = String(myString)
-        push!.strHospitalId = String(myString2)
-        push!.strImageStatus = "prescription"
-        
-        self.navigationController?.pushViewController(push!, animated: true)*/
-        
-        // print(self.dictGetAppointmentDetails as Any)
-        
+        if item.count == 0 {
+            
+            let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No Prescription found"), style: .alert)
+            
+            alert.addImage(UIImage.gif(name: "gif_alert"))
+            
+            let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                
+                
+            }
+            alert.addButtons([cancel])
+            
+            self.present(alert, animated: true)
+            
+        } else {
         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddImagesId") as? AddImages
         
         push!.getAppointmentDetailsIn = self.dictGetAppointmentDetails
@@ -168,7 +191,7 @@ class PPAppointmentDetailsVC: UIViewController {
         }
         
         self.navigationController?.pushViewController(push!, animated: true)
-        
+    }
     }
     
     // MARK:- VIEW NOTES -

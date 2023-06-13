@@ -1,4 +1,11 @@
 //
+
+
+// rahu kaal : 10 - 12 kuch nai krna
+ // === > 1 bje jae , 
+
+
+
 //  AppDelegate.swift
 //  E health App
 //
@@ -6,7 +13,12 @@
 //
 
 // // 9501795017
-
+/*
+[action] => addanswer
+    [userId] => 395
+    [answerJson] => [{"questionName":"Patient Name","answer":"neema","questionId":"1"},{"questionName":"Patient Residential Address","answer":"ramprastha ","questionId":"2"},{"questionName":"Patient Date of Birth?","answer":"23 jan 2000","questionId":"3"},{"questionName":"Describe briefly your present symptoms","answer":"","questionId":"6"},{"questionName":"Please list the names of other practitioners you have seen for this problem:","answer":"","questionId":"7"},{"questionName":"Psychiatric Hospitalizations (include where, when, & for what reason):","answer":"","questionId":"8"},{"questionName":"Have you ever had ECT?                          ","answer":"","questionId":"9"},{"questionName":"  Have you had psychotherapy?","answer":"","questionId":"10"},{"questionName":"Drug allergies?","answer":"","questionId":"11"},{"questionName":"Please mention any medications that you are now taking. Include non-prescription medications & vitamins or supplements:","answer":"","questionId":"12"},{"questionName":"PAST MEDICAL HISTORY DETAILS","answer":"","questionId":"13"},{"questionName":"EXTENDED FAMILY PSYCHIATRIC PROBLEMS PAST & PRESENT:","answer":"","questionId":"14"}]
+)
+*/
 /*
  Diagnostic Labs Profile
  welcome(Repeat)

@@ -33,11 +33,31 @@ class inventoryDetailsTableViewCell: UITableViewCell,UITextFieldDelegate {
         }
     }
     
-    @IBOutlet weak var lblMedName:UILabel! // index 1
-    @IBOutlet weak var lblMedComposition:UILabel! // index 2
-    @IBOutlet weak var lblMedWeight:UILabel! // index 3
-    @IBOutlet weak var lblMedPrice:UILabel! // index 4
-    @IBOutlet weak var lblStock:UILabel! // index 5
+    @IBOutlet weak var lblMedName:UILabel! {
+        didSet {
+            lblMedName.textColor = .black
+        }
+    } // index 1
+    @IBOutlet weak var lblMedComposition:UILabel! {
+        didSet {
+            lblMedComposition.textColor = .black
+        }
+    } // index 2
+    @IBOutlet weak var lblMedWeight:UILabel! {
+        didSet {
+            lblMedWeight.textColor = .black
+        }
+    } // index 3
+    @IBOutlet weak var lblMedPrice:UILabel! {
+        didSet {
+            lblMedPrice.textColor = .black
+        }
+    } // index 4
+    @IBOutlet weak var lblStock:UILabel! {
+        didSet {
+            lblStock.textColor = .black
+        }
+    } // index 5
     
     @IBOutlet weak var viewTxtBG:UIView!{
         didSet{

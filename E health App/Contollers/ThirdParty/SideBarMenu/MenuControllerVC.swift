@@ -11,7 +11,7 @@ import Alamofire
 import SDWebImage
 
 class MenuControllerVC: UIViewController {
-
+    
     let cellReuseIdentifier = "menuControllerVCTableCell"
     
     var bgImage: UIImageView?
@@ -36,7 +36,7 @@ class MenuControllerVC: UIViewController {
     
     @IBOutlet weak var imgSidebarMenuImage:UIImageView! {
         didSet {
-           // imgSidebarMenuImage.backgroundColor = .clear
+            // imgSidebarMenuImage.backgroundColor = .clear
             //imgSidebarMenuImage.layer.cornerRadius = 2
             //imgSidebarMenuImage.clipsToBounds = true
             imgSidebarMenuImage.image = UIImage(named: "supplier")
@@ -51,9 +51,11 @@ class MenuControllerVC: UIViewController {
     var arrHospitalTitle = ["Home",
                             "Edit Profile",
                             "Booked Appointments",
+                            "Notifications",
                             "Doctors",
                             "Labs",
                             "Pharmacies",
+                            "Patients Reports",
                             "Patients",
                             "Cart",
                             "Contact Suppliers",
@@ -66,8 +68,10 @@ class MenuControllerVC: UIViewController {
     var arrHospitalImage = ["home",
                             "edit_profile",
                             "sidebarmenuEdit",
+                            "sidebarmenuEdit",
                             "sidebarmenuDoctor",
                             "sidebarmenuLaabs",
+                            "sidebarmenuPharmacies",
                             "sidebarmenuPharmacies",
                             "sidebarmenuPatient",
                             "sidebarmenuPatient",
@@ -83,43 +87,47 @@ class MenuControllerVC: UIViewController {
     
     // patient
     var arrPatientTitle = ["Home",
-                            "Edit Profile",
-                            "Book an appointment",
-                            "Medical History",
-                            "E - Health Card",
-                            "Change Password",
-                            "Help",
-                            "Signout"]
+                           "Edit Profile",
+                           "Book an appointment",
+                           "Notifications",
+                           "Medical History",
+                           "E - Health Card",
+                           "Change Password",
+                           "Help",
+                           "Signout"]
     
     var arrPatientImage = ["home",
-                            "edit_profile",
-                            "edit_profile",
-                            "edit_profile",
-                            "edit_profile",
-                            "lock",
-                            "help",
-                            "logout"]
+                           "edit_profile",
+                           "book_appointment",
+                           "notification",
+                           "medical_history",
+                           "medical_card",
+                           "lock",
+                           "help",
+                           "logout"]
     
     
     // doctor
     var arrDoctorTitle = ["Home",
-                            "Edit Profile",
-                            "Booked Appointment",
-                            "Order History",
-                            "Contact Suppliers",
-                            "Supplier Request",
+                          "Edit Profile",
+                          "Booked Appointment",
+                          "Notifications",
+                          "Order History",
+                          "Contact Suppliers",
+                          "Supplier Request",
                           "Cart",
-                            "Help",
+                          "Help",
                           "Change Password",
-                            "Signout"]
+                          "Signout"]
     
     var arrDoctorImage = ["home",
                           "edit_profile",
                           "edit_profile",
-                          "edit_profile",
-                          "edit_profile",
+                          "notification",
+                          "order_history",
+                          "contact_supplier",
+                          "request_supplier",
                           "cart",
-                          "lock",
                           "help",
                           "lock",
                           "logout"]
@@ -128,6 +136,7 @@ class MenuControllerVC: UIViewController {
     var arrSupplierTitle = ["Home",
                             "Edit Profile",
                             "Manage Inventory",
+                            "Notifications",
                             "Order History",
                             "Change Password",
                             "Help",
@@ -135,8 +144,9 @@ class MenuControllerVC: UIViewController {
     
     var arrSupplierImage = ["home",
                             "edit_profile",
-                            "medical",
-                            "medical",
+                            "manage_inventory",
+                            "notification",
+                            "order_history",
                             "lock",
                             "help",
                             "logout"]
@@ -144,8 +154,10 @@ class MenuControllerVC: UIViewController {
     // lab
     var arrLabTitle = ["Home",
                        "Edit Profile",
+                       "Notifications",
                        "Patient Test",
                        "Order History",
+                       "Patient Records",
                        "Patients",
                        "Contact Suppliers",
                        "Request Supplier",
@@ -156,11 +168,13 @@ class MenuControllerVC: UIViewController {
     
     var arrLabImage = ["home",
                        "edit_profile",
-                       "medical",
-                       "medical",
-                       "medical",
-                       "medical",
-                       "medical",
+                       "notification",
+                       "test",
+                       "order_history",
+                       "patient_records",
+                       "add_patient",
+                       "contact_supplier",
+                       "request_supplier",
                        "cart",
                        "lock",
                        "help",
@@ -169,28 +183,32 @@ class MenuControllerVC: UIViewController {
     
     // pharmacy
     var arrPharmacyTitle = ["Home",
-                       "Edit Profile",
-                       "Patient Prescription",
-                       "Order History",
-                       "Patients",
-                       "Contact Suppliers",
-                       "Request Supplier",
-                       "Cart",
-                       "Change Password",
-                       "Help",
-                       "Signout"]
+                            "Edit Profile",
+                            "Notifications",
+                            "Patient Prescription",
+                            "Order History",
+                            "Patient Records",
+                            "Patients",
+                            "Contact Suppliers",
+                            "Request Supplier",
+                            "Cart",
+                            "Change Password",
+                            "Help",
+                            "Signout"]
     
     var arrPharmacyImage = ["home",
-                       "edit_profile",
-                       "medical",
-                       "medical",
-                       "medical",
-                       "medical",
-                       "medical",
-                       "cart",
-                       "lock",
-                       "help",
-                       "logout"]
+                            "edit_profile",
+                            "notification",
+                            "prescription",
+                            "order_history",
+                            "patient_records",
+                            "add_patient",
+                            "contact_supplier",
+                            "request_supplier",
+                            "cart",
+                            "lock",
+                            "help",
+                            "logout"]
     
     
     @IBOutlet weak var lblUserName:UILabel! {
@@ -235,19 +253,19 @@ class MenuControllerVC: UIViewController {
         
         self.sideBarMenuClick()
     }
-   
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]  {
-             
+            
             print(person as Any)
             
             if (person["role"] as! String) == "Hospital" {
                 
                 /*
                  ["status": 1, "device": iOS, "lastName": , "description": 1212122re, "eyeColor": , "longitude": , "dob": , "height": , "gender": , "zipCode": , "countryId": , "contactNumber": 8283828382, "state": , "specialty": N.A., "hospitalName": Africa E-health, "registeredDt": , "image": , "userId": 108, "socialType": , "socialId": , "firebaseId": , "latitude": , "middleName": , "role": Hospital, "department": N.A., "address": 121212, "deviceToken": , "medicalCardID": , "practiceDate": , "approveByAdmin": 1, "email": testios@gmail.com, "city": , "fullName": Test iOS]
-
+                 
                  */
                 
                 self.lblUserName.text = (person["fullName"] as! String)
@@ -316,17 +334,17 @@ class MenuControllerVC: UIViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-          return .lightContent
+        return .lightContent
     }
     
     @objc func sideBarMenuClick() {
         
         if revealViewController() != nil {
-        menuButton.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
-        
+            menuButton.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
+            
             revealViewController().rearViewRevealWidth = 300
             view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-          }
+        }
     }
 }
 
@@ -441,6 +459,30 @@ extension MenuControllerVC: UITableViewDataSource {
                     let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "HPDashboardVC")
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
+                   
+                } else if arrHospitalTitle[indexPath.row] == "Patients Reports" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "ReportsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrHospitalTitle[indexPath.row] == "Notifications" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
                     
                 } else if arrHospitalTitle[indexPath.row] == "Change Password" {
                     
@@ -539,10 +581,17 @@ extension MenuControllerVC: UITableViewDataSource {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
-                    let destinationController = storyboard.instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
-                    // destinationController!.strMyProfileIs = "FromHospitalProfileToSuppliers"
+                    
+                    let destinationController = storyboard.instantiateViewController(withIdentifier: "selectDiseaseVC") as? selectDiseaseVC
+                    
+                    
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
+                    
+                    
+                    
+                    
+                    
                     
                 } else if arrHospitalTitle[indexPath.row] == "Cart" {
                     
@@ -620,6 +669,18 @@ extension MenuControllerVC: UITableViewDataSource {
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     
+                } else if arrPatientTitle[indexPath.row] == "Notifications" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
                 } else if arrPatientTitle[indexPath.row] == "Signout" {
                     
                     let alert = UIAlertController(title: String("Logout"), message: String("Are you sure your want to logout ?"), preferredStyle: UIAlertController.Style.alert)
@@ -632,8 +693,6 @@ extension MenuControllerVC: UITableViewDataSource {
                     alert.addAction(UIAlertAction(title: "Dismiss", style: .destructive, handler: nil))
                     
                     self.present(alert, animated: true, completion: nil)
-                    
-                    
                     
                 } else if arrPatientTitle[indexPath.row] == "Book an appointment" {
                     
@@ -764,6 +823,18 @@ extension MenuControllerVC: UITableViewDataSource {
                         
                         self.present(alert, animated: true, completion: nil)
                         
+                    } else if arrDoctorTitle[indexPath.row] == "Notifications" {
+                        
+                        let myString = "backOrMenu"
+                        UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                        
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                        self.view.window?.rootViewController = sw
+                        let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
+                        let navigationController = UINavigationController(rootViewController: destinationController!)
+                        sw.setFront(navigationController, animated: true)
+                        
                     } else if arrDoctorTitle[indexPath.row] == "Edit Profile"  {
                         
                         let myString = "backOrMenu"
@@ -821,7 +892,9 @@ extension MenuControllerVC: UITableViewDataSource {
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                         self.view.window?.rootViewController = sw
-                        let destinationController = storyboard.instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
+                        
+                        let destinationController = storyboard.instantiateViewController(withIdentifier: "selectDiseaseVC") as? selectDiseaseVC
+                        
                         // destinationController!.strMyProfileIs = "FromHospitalProfileToSuppliers"
                         let navigationController = UINavigationController(rootViewController: destinationController!)
                         sw.setFront(navigationController, animated: true)
@@ -879,6 +952,18 @@ extension MenuControllerVC: UITableViewDataSource {
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     
+                } else if arrSupplierTitle[indexPath.row] == "Notifications" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
                 } else if arrSupplierTitle[indexPath.row] == "Edit Profile"  {
                     
                     let myString = "backOrMenu"
@@ -911,7 +996,7 @@ extension MenuControllerVC: UITableViewDataSource {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
-                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "orderHistoryVC")
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "ReportsId")
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     
@@ -968,7 +1053,44 @@ extension MenuControllerVC: UITableViewDataSource {
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     
-                } else if arrLabTitle[indexPath.row] == "Patients"  {
+                } else if arrLabTitle[indexPath.row] == "Patient Test" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "ReportsId") as? Reports
+                    destinationController!.str_lab_test_Status = "yes"
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrLabTitle[indexPath.row] == "Patient Records" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "ReportsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrLabTitle[indexPath.row] == "Notifications" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                }  else if arrLabTitle[indexPath.row] == "Patients"  {
                     
                     let myString = "backOrMenu"
                     UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
@@ -1014,7 +1136,9 @@ extension MenuControllerVC: UITableViewDataSource {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
-                    let destinationController = storyboard.instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
+                    
+                    let destinationController = storyboard.instantiateViewController(withIdentifier: "selectDiseaseVC") as? selectDiseaseVC
+                    
                     // destinationController!.strMyProfileIs = "FromHospitalProfileToSuppliers"
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
@@ -1081,6 +1205,42 @@ extension MenuControllerVC: UITableViewDataSource {
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
                     let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "helpVC")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrPharmacyTitle[indexPath.row] == "Order History"  {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "orderHistoryVC")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrPharmacyTitle[indexPath.row] == "Patient Records" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "ReportsId")
+                    let navigationController = UINavigationController(rootViewController: destinationController!)
+                    sw.setFront(navigationController, animated: true)
+                    
+                } else if arrPharmacyTitle[indexPath.row] == "Notifications" {
+                    
+                    let myString = "backOrMenu"
+                    UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
+                    
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
+                    self.view.window?.rootViewController = sw
+                    let destinationController = self.storyboard?.instantiateViewController(withIdentifier: "AllNotificationsId")
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     
@@ -1167,7 +1327,9 @@ extension MenuControllerVC: UITableViewDataSource {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
-                    let destinationController = storyboard.instantiateViewController(withIdentifier: "manageInventoryVC") as? manageInventoryVC
+                    
+                    let destinationController = storyboard.instantiateViewController(withIdentifier: "selectDiseaseVC") as? selectDiseaseVC
+                    
                     // destinationController!.strMyProfileIs = "FromHospitalProfileToSuppliers"
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
@@ -1180,8 +1342,9 @@ extension MenuControllerVC: UITableViewDataSource {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let sw = storyboard.instantiateViewController(withIdentifier: "sw") as! SWRevealViewController
                     self.view.window?.rootViewController = sw
-                    let destinationController = storyboard.instantiateViewController(withIdentifier: "HPDoctorsVC") as? HPDoctorsVC
-                    destinationController!.strMyProfileIs = "FromLabToAllPatients"
+                    let destinationController = storyboard.instantiateViewController(withIdentifier: "ReportsId") as? Reports
+                    // destinationController!.strMyProfileIs = "FromLabToAllPatients"
+                    destinationController!.str_pharmacy_prescription_Status = "yes"
                     let navigationController = UINavigationController(rootViewController: destinationController!)
                     sw.setFront(navigationController, animated: true)
                     

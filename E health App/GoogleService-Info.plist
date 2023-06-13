@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>457781230976-u8qmhpvbu24b1igf61po8m2iv7f8n9ql.apps.googleusercontent.com</string>
+	<string>667327318779-ecf4lgvejdvalkc6dkppd6t8op7q8idl.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.457781230976-u8qmhpvbu24b1igf61po8m2iv7f8n9ql</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>457781230976-5h72aslo1mt8s6i2051tibuk66v6e89q.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.667327318779-ecf4lgvejdvalkc6dkppd6t8op7q8idl</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDSbsoM1X8XI0XSKccHaVHQZDXm0vHAU6k</string>
+	<string>AIzaSyCgGmP9X5dWA_YfyIzM089h8rrMt_0yS30</string>
 	<key>GCM_SENDER_ID</key>
-	<string>457781230976</string>
+	<string>667327318779</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.test.ehealthapp</string>
+	<string>com.dev.e-health</string>
 	<key>PROJECT_ID</key>
-	<string>africa-ehealth</string>
+	<string>official-console</string>
 	<key>STORAGE_BUCKET</key>
-	<string>africa-ehealth.appspot.com</string>
+	<string>official-console.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:457781230976:ios:8dba75845afbf477395565</string>
+	<string>1:667327318779:ios:512108ae0bffedd8907e5e</string>
 </dict>
 </plist>

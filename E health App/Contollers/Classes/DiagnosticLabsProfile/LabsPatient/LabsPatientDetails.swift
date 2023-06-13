@@ -43,7 +43,7 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
         
         // self.sideBarMenuClick()
         
-        print(self.dictSupplierLoginData as Any)
+        // print(self.dictSupplierLoginData as Any)
         
          
         
@@ -137,6 +137,15 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
             backgroundView.backgroundColor = .clear
             cell.selectedBackgroundView = backgroundView
             
+            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+             
+                if (person["role"] as! String) == "Lab" {
+                    cell.lbl_heading.text = "Name"
+                } else {
+                    cell.lbl_heading.text = "Hospital / Clinic"
+                }
+            }
+            
             cell.lblHospitalName.text = (self.dictSupplierLoginData["fullName"] as! String)
             
             return cell
@@ -187,7 +196,7 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
                 
             }
             
-            
+            //
             
             return cell
         }
@@ -210,80 +219,125 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
     }
     
     @objc func test_list_wb() {
+        
+        
+         print(self.dictSupplierLoginData as Any)
+        
         let x : Int = (self.dictSupplierLoginData!["userId"] as! Int)
         let myString = String(x)
         
-        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        
-        self.view.endEditing(true)
-        
-        let params = show_only_test_list(action: "testlist",
-                                         userId: String(myString))
-        
-        print(params as Any)
-        
-        AF.request(APPLICATION_BASE_URL,
-                   method: .post,
-                   parameters: params,
-                   encoder: JSONParameterEncoder.default).responseJSON { response in
-            // debugPrint(response.result)
+        /*if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            let x_4 : Int = (person["userId"] as! Int)
+            let myString_4 = String(x_4)
             
-            switch response.result {
-            case let .success(value):
-                
-                let JSON = value as! NSDictionary
-                print(JSON as Any)
-                
-                var strSuccess : String!
-                strSuccess = JSON["status"]as Any as? String
-                
-                // var strSuccess2 : String!
-                // strSuccess2 = JSON["msg"]as Any as? String
-                
-                if strSuccess == String("success") {
-                    print("yes")
-                    
-                    ERProgressHud.sharedInstance.hide()
-                    
-                    // self.imgView.isHidden = false
-                    
-                    var ar : NSArray!
-                    ar = (JSON["data"] as! Array<Any>) as NSArray
-                    // self.arrListOfAllHistory.addObjects(from: ar as! [Any])
-                    
-                    let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddImagesId") as? AddImages
-                    
-                    // push!.imgGetMedicalHistory = (self.dictSupplierLoginData["image"] as! String)
-                    push!.strShowImageDetailsFor = "test_list_from_labs"
-                    push!.arr_list_of_all_test_from_labs = ar!
-                    
-                    self.navigationController?.pushViewController(push!, animated: true)
-                    
-                } else {
-                    print("no")
-                    ERProgressHud.sharedInstance.hide()
-                    
-                    var strSuccess2 : String!
-                    strSuccess2 = JSON["msg"]as Any as? String
-                    
-                    let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                    
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: {
-                        action in
-                        // self.navigationController?.popViewController(animated: true)
-                    }))
-                    
-                    self.present(alert, animated: true)
-                    
-                }
-                
-            case let .failure(error):
-                print(error)
-                ERProgressHud.sharedInstance.hide()
-                
-                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
-            }
-        }
+            let x : Int = (self.dictSupplierLoginData!["userId"] as! Int)
+            let myString = String(x)
+            
+            let x_2 : Int = (self.dictSupplierLoginData!["doctorId"] as! Int)
+            let myString_2 = String(x_2)
+            
+            let x_3 : Int = (self.dictSupplierLoginData!["appointmentId"] as! Int)
+            let myString_3 = String(x_3)
+            */
+            let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPAppointmentsVC") as? PPAppointmentsVC
+            
+            push!.check_apoointment_status_patient_details = "yes_appointment_from_patient_Details"
+            push!.patient_id_from_apoointment_detail = String(myString)
+            // push!.str_lab_permission_doctor_id = String(myString_2)
+            // push!.str_lab_permission_appointment_id = String(myString_3)
+            // push!.str_lab_permission_login_id = String(myString_4)
+            
+            self.navigationController?.pushViewController(push!, animated: true)
+        // }
+        
+        /*let x : Int = (self.dictSupplierLoginData!["userId"] as! Int)
+         let myString = String(x)
+         
+         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+         
+         self.view.endEditing(true)
+         
+         let params = show_only_test_list(action: "testlist",
+         userId: String(myString))
+         
+         print(params as Any)
+         
+         AF.request(APPLICATION_BASE_URL,
+         method: .post,
+         parameters: params,
+         encoder: JSONParameterEncoder.default).responseJSON { response in
+         // debugPrint(response.result)
+         
+         switch response.result {
+         case let .success(value):
+         
+         let JSON = value as! NSDictionary
+         print(JSON as Any)
+         
+         var strSuccess : String!
+         strSuccess = JSON["status"]as Any as? String
+         
+         // var strSuccess2 : String!
+         // strSuccess2 = JSON["msg"]as Any as? String
+         
+         if strSuccess == String("success") {
+         print("yes")
+         
+         ERProgressHud.sharedInstance.hide()
+         
+         // self.imgView.isHidden = false
+         
+         var ar : NSArray!
+         ar = (JSON["data"] as! Array<Any>) as NSArray
+         // self.arrListOfAllHistory.addObjects(from: ar as! [Any])
+         
+         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddImagesId") as? AddImages
+         
+         // push!.imgGetMedicalHistory = (self.dictSupplierLoginData["image"] as! String)
+         push!.strShowImageDetailsFor = "test_list_from_labs"
+         push!.arr_list_of_all_test_from_labs = ar!
+         
+         self.navigationController?.pushViewController(push!, animated: true)
+         
+         } else {
+         print("no")
+         ERProgressHud.sharedInstance.hide()
+         
+         var strSuccess2 : String!
+         strSuccess2 = JSON["msg"]as Any as? String
+         
+         let alert = NewYorkAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), style: .alert)
+         
+         alert.addImage(UIImage.gif(name: "gif_alert"))
+         
+         let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+         
+         // SPConfetti.stopAnimating()
+         
+         // self.navigationController?.popViewController(animated: true)
+         }
+         alert.addButtons([cancel])
+         
+         self.present(alert, animated: true)
+         
+         /*let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+          
+          alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: {
+          action in
+          // self.navigationController?.popViewController(animated: true)
+          }))
+          
+          self.present(alert, animated: true)*/
+         
+         }
+         
+         case let .failure(error):
+         print(error)
+         ERProgressHud.sharedInstance.hide()
+         
+         // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+         }
+         }*/
         
         
     }
@@ -392,7 +446,17 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
             
         } else if indexPath.row == 1 {
             
-            return UITableView.automaticDimension
+            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+             
+                if (person["role"] as! String) == "Lab" {
+                    return 0 // UITableView.automaticDimension
+                } else {
+                    return UITableView.automaticDimension
+                }
+            } else {
+                return 0
+            }
+            
             
         } else if indexPath.row == 2 {
             
@@ -418,7 +482,14 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
     @objc func get_medical_history_data_for_permission() {
         // self.arrListOfAppoitmentList.removeAllObjects()
         
-        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+        
+        push!.str_edit_patient = "no_edit"
+        push!.getPatientRegistrationDetails = self.dictSupplierLoginData
+        
+        self.navigationController?.pushViewController(push!, animated: true)
+        
+        /*ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
         print(self.dictSupplierLoginData as Any)
         
@@ -554,11 +625,23 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
             }
         }
         
-        // }
+        // }*/
     }
     
     @objc func getMedicalHistoryPermission() {
-        // self.arrListOfAppoitmentList.removeAllObjects()
+        
+        // PPAppointmentsVC
+        
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+        
+        push!.str_edit_patient = "no_edit"
+        push!.getPatientRegistrationDetails = self.dictSupplierLoginData
+        
+        self.navigationController?.pushViewController(push!, animated: true)
+        
+        
+        
+        /*// self.arrListOfAppoitmentList.removeAllObjects()
         
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
@@ -695,7 +778,7 @@ class LabsPatientDetails: UIViewController , UITableViewDataSource , UITableView
             }
         }
         
-        // }
+        // }*/
     }
     
     @objc func lab_permission_request_wb(strAction:String,

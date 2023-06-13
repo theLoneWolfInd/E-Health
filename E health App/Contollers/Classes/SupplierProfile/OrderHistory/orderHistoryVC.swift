@@ -13,6 +13,10 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
     
     var arrListOfAllHistory : NSMutableArray! = []
     
+    var str_order_history_start_Date:String!
+    var str_order_history_end_Date:String!
+    var str_order_history_keyword:String!
+    
     @IBOutlet weak var viewNavigationBar:UIView!
     @IBOutlet weak var btnDashboardMenu:UIButton!
     @IBOutlet weak var lblNavigationBar:UILabel!{
@@ -108,9 +112,12 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = UIEdgeInsets.zero
         cell.layoutMargins = UIEdgeInsets.zero
+        
         let backgroundView = UIView()
         backgroundView.backgroundColor = .clear
         cell.selectedBackgroundView = backgroundView
+        
+         cell.backgroundColor = .white
         
         let item = self.arrListOfAllHistory[indexPath.row] as? [String:Any]
         
@@ -145,6 +152,26 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
                     
                     cell.lblCustomerName.text = (item!["supplier_name"] as! String)
                     
+                    cell.imgCustomer.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                    cell.imgCustomer.sd_setImage(with: URL(string: (item!["supplier_image"] as! String)), placeholderImage: UIImage(named: "1024"))
+                    
+                } else  if (person["role"] as! String) == "Pharmacy" {
+                    
+                    cell.lblCustomerName.text = (item!["supplier_name"] as! String)
+                    
+                    cell.imgCustomer.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                    cell.imgCustomer.sd_setImage(with: URL(string: (item!["supplier_image"] as! String)), placeholderImage: UIImage(named: "1024"))
+                    
+                }  else  if (person["role"] as! String) == "Lab" {
+                    
+                    cell.lblCustomerName.text = (item!["supplier_name"] as! String)
+                    
+                    cell.imgCustomer.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                    cell.imgCustomer.sd_setImage(with: URL(string: (item!["supplier_image"] as! String)), placeholderImage: UIImage(named: "1024"))
+                    
+                }  else  if (person["role"] as! String) == "Doctor" {
+                    
+                    cell.lblCustomerName.text = (item!["supplier_name"] as! String)
                     
                     cell.imgCustomer.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
                     cell.imgCustomer.sd_setImage(with: URL(string: (item!["supplier_image"] as! String)), placeholderImage: UIImage(named: "1024"))
@@ -164,8 +191,6 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
             
             cell.lblDate.text = "Date: "+(item!["date"] as! String)
             cell.lblOptional.text = (item!["delivery_address"] as! String)
-            
-            
             
             
             
@@ -190,10 +215,6 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
                 }
                 
             }
-            
-            
-            
-            
             
         }
         
@@ -279,8 +300,23 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
-            let params =  OrderHistory(action: "orderhistory",
-                                       userId: String(myString))
+            if self.str_order_history_start_Date == nil {
+                self.str_order_history_start_Date = ""
+            }
+            
+            if self.str_order_history_end_Date == nil {
+                self.str_order_history_end_Date = ""
+            }
+            
+            if self.str_order_history_keyword == nil {
+                self.str_order_history_keyword = ""
+            }
+            
+            let params =  order_history(action: "orderhistory",
+                                        userId: String(myString),
+                                        start_date: String(str_order_history_start_Date),
+                                        end_date: String(str_order_history_end_Date),
+                                        keyword: String(str_order_history_keyword))
             
             
             print(params as Any)
@@ -314,8 +350,18 @@ class orderHistoryVC: UIViewController,UITableViewDelegate, UITableViewDataSourc
                         
                         if self.arrListOfAllHistory.count == 0 {
                             
-                            let alert = UIAlertController(title: "Alert", message: "No Data found.", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+                            let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No Data Found"), style: .alert)
+                            
+                            alert.addImage(UIImage.gif(name: "gif_alert"))
+                            
+                            let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                                
+                                // SPConfetti.stopAnimating()
+                                
+                                 self.navigationController?.popViewController(animated: true)
+                            }
+                            alert.addButtons([cancel])
+                            
                             self.present(alert, animated: true)
                             
                         } else {

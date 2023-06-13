@@ -9,7 +9,11 @@ import UIKit
 
 class selectDiseaseTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var lblDiseaseName:UILabel!
+    @IBOutlet weak var lblDiseaseName:UILabel! {
+        didSet {
+            lblDiseaseName.textColor = .black
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()

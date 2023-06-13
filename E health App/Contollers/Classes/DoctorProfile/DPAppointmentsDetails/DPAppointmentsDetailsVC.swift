@@ -31,7 +31,7 @@ class DPAppointmentsDetailsVC: UIViewController {
     
     @IBOutlet weak var btnCheckMedicalHist:UIButton!{
         
-        didSet{
+        didSet {
             btnCheckMedicalHist.layer.cornerRadius = 27.5
             btnCheckMedicalHist.clipsToBounds = true
         }
@@ -65,8 +65,10 @@ class DPAppointmentsDetailsVC: UIViewController {
         // tablView.dataSource =  self
         self.view.backgroundColor = .white
         tablView.backgroundColor =  .white
-        self.navigationController?.isNavigationBarHidden = true
         self.tablView.tableFooterView = UIView.init(frame: CGRect(origin: .zero, size: .zero))
+        
+        self.navigationController?.isNavigationBarHidden = true
+        
         
         print(self.dictGetBookingDetailsForDoctors as Any)
         
@@ -110,7 +112,8 @@ class DPAppointmentsDetailsVC: UIViewController {
             } else if (person["role"] as! String) == "Doctor" {
                 
                 self.btnUploadPrescription.setTitle("Upload Prescription", for: .normal)
-                self.btnCheckMedicalHist.setTitle("Upload Medical History", for: .normal)
+                self.btnCheckMedicalHist.setTitle("Check Medical History", for: .normal)
+                self.btnCheckMedicalHist.addTarget(self, action: #selector(doctor_check_medical_history), for: .touchUpInside)
                 
             } else {
                 
@@ -132,6 +135,17 @@ class DPAppointmentsDetailsVC: UIViewController {
         
         // ALL APPOINTMENT LISTS
         self.appointmentDetailsWB()
+        
+    }
+    
+    @objc func doctor_check_medical_history() {
+        
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+        
+        push!.strIamFromBookedAppointment = "yes"
+        push!.getPatientRegistrationDetails = self.dictGetBookingDetailsForDoctors
+        
+        self.navigationController?.pushViewController(push!, animated: true)
         
     }
     
@@ -364,7 +378,7 @@ class DPAppointmentsDetailsVC: UIViewController {
     
 }
 
-extension DPAppointmentsDetailsVC:UITableViewDelegate,UITableViewDataSource{
+extension DPAppointmentsDetailsVC:UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         

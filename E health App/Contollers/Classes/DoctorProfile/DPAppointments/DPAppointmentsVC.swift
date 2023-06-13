@@ -24,17 +24,23 @@ class DPAppointmentsVC: UIViewController,FSCalendarDelegate {
         }
     }
     
-    @IBOutlet weak var calendar:FSCalendar!
+    @IBOutlet weak var calendar:FSCalendar! {
+        didSet {
+            calendar.backgroundColor = .white
+        }
+    }
+    
     @IBOutlet weak var btnCheckAppointments:UIButton!
     @IBOutlet weak var lblSelectedDate:UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.view.backgroundColor = .white
+        
         calendar.delegate = self
         lblSelectedDate.text = "Please select date"
         btnCheckAppointments.addTarget(self, action: #selector(btnCheckAppointmentsPress), for: .touchUpInside)
-        
         
         if let myLoadedString = UserDefaults.standard.string(forKey: "keySetToBackOrMenu") {
             print(myLoadedString)
@@ -101,6 +107,11 @@ class DPAppointmentsVC: UIViewController,FSCalendarDelegate {
             
             let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "PPAppointmentsVC") as? PPAppointmentsVC
             
+            let today_date = Date().today(format: "yyyy-MM-dd")
+            
+            // print(strSaveClickedDate)
+            push!.str_appointment_start_Date = String(self.strSaveClickedDate)
+            push!.str_appointment_end_date = "\(today_date)"
             push!.strAppointmentDateCheck = self.strSaveClickedDate
             
             self.navigationController?.pushViewController(push!, animated: true)

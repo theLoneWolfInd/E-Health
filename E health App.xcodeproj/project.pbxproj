@@ -3,14 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		18056DBE27203E02001455EB /* RPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18056DBD27203E01001455EB /* RPicker.swift */; };
+		1814913427A7BD6F00409352 /* RPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1814913327A7BD6F00409352 /* RPicker.swift */; };
+		1814913727A7BE4F00409352 /* gif_alert.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1814913627A7BE4F00409352 /* gif_alert.gif */; };
 		181858A326F89C9500EB511C /* PatientEhealthCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181858A226F89C9500EB511C /* PatientEhealthCard.swift */; };
 		181858A626F8BF1000EB511C /* PatientPrescriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181858A526F8BF1000EB511C /* PatientPrescriptionList.swift */; };
 		181858A826F8BF2D00EB511C /* PatientPrescriptionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181858A726F8BF2D00EB511C /* PatientPrescriptionTableCell.swift */; };
+		1818C7B627B0EF60000ED15A /* Reports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1818C7B527B0EF60000ED15A /* Reports.swift */; };
+		1818C7B827B0EF78000ED15A /* ReportsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1818C7B727B0EF78000ED15A /* ReportsTableCell.swift */; };
 		1819654F26F9C70400B32162 /* PatientPrescriptionDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1819654E26F9C70400B32162 /* PatientPrescriptionDetails.swift */; };
 		1819655126F9C71300B32162 /* PatientPrescriptionDetailsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1819655026F9C71300B32162 /* PatientPrescriptionDetailsTableCell.swift */; };
 		181A244826F34F76003648AB /* BuyNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A244726F34F76003648AB /* BuyNow.swift */; };
@@ -18,6 +21,8 @@
 		181A244D26F37428003648AB /* CTotalCartList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A244B26F37428003648AB /* CTotalCartList.swift */; };
 		181A9D6726F6087500A98D3F /* CEditTotalTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A9D6526F6087500A98D3F /* CEditTotalTableCell.swift */; };
 		181A9D6826F6087500A98D3F /* CEditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181A9D6626F6087500A98D3F /* CEditProfile.swift */; };
+		1824480227B39C9500C7CC2B /* PharmacyPrescriptionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1824480127B39C9500C7CC2B /* PharmacyPrescriptionList.swift */; };
+		1824480427B39CC100C7CC2B /* PharmacyPrescriptionListTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1824480327B39CC100C7CC2B /* PharmacyPrescriptionListTableCell.swift */; };
 		182870AA26F87F050075FDFA /* ShowImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182870A926F87F050075FDFA /* ShowImage.swift */; };
 		1829BC12270C63BC005A7C46 /* OrderItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829BC11270C63BC005A7C46 /* OrderItems.swift */; };
 		1829BC14270C63CE005A7C46 /* OrderItemsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1829BC13270C63CE005A7C46 /* OrderItemsTableCell.swift */; };
@@ -31,7 +36,6 @@
 		184669A427105E2B00FD26A3 /* 19-magnifier-zoom-search-outline.gif in Resources */ = {isa = PBXBuildFile; fileRef = 184669A327105E2B00FD26A3 /* 19-magnifier-zoom-search-outline.gif */; };
 		184669A627105E3300FD26A3 /* search.gif in Resources */ = {isa = PBXBuildFile; fileRef = 184669A527105E3300FD26A3 /* search.gif */; };
 		184669A82710637500FD26A3 /* search1.gif in Resources */ = {isa = PBXBuildFile; fileRef = 184669A72710637500FD26A3 /* search1.gif */; };
-		184669AA27106A5000FD26A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 184669A927106A5000FD26A3 /* GoogleService-Info.plist */; };
 		1852C49C270D889000FBFF04 /* plus-button.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1852C49B270D889000FBFF04 /* plus-button.gif */; };
 		1852C49E270D88AC00FBFF04 /* 213-arrow-2-rounded.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1852C49D270D88AC00FBFF04 /* 213-arrow-2-rounded.gif */; };
 		1852C4A8270D8AD700FBFF04 /* UIStackView+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852C4A0270D8AD600FBFF04 /* UIStackView+Utility.swift */; };
@@ -44,6 +48,7 @@
 		1852C4AF270D8AD700FBFF04 /* LeftPaddingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1852C4A7270D8AD700FBFF04 /* LeftPaddingTextField.swift */; };
 		18539ADB2721915F00025A26 /* PharmacyPatientsPrescriptionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18539ADA2721915F00025A26 /* PharmacyPatientsPrescriptionsList.swift */; };
 		18539ADD272191A600025A26 /* PharmacyPatientPrescriptionsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18539ADC272191A600025A26 /* PharmacyPatientPrescriptionsTableCell.swift */; };
+		1854670C27ABCD3900D30285 /* gif_trash.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1854670B27ABCD3900D30285 /* gif_trash.gif */; };
 		185B994C27156A1A007E9AD9 /* MedicalHistoryAddImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185B994B27156A19007E9AD9 /* MedicalHistoryAddImage.swift */; };
 		185B994E27156A3E007E9AD9 /* MedicalHistoryAddImagesCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185B994D27156A3E007E9AD9 /* MedicalHistoryAddImagesCollectionCell.swift */; };
 		186B795F26F332440000580D /* YBTextPicker4.gif in Resources */ = {isa = PBXBuildFile; fileRef = 186B794E26F332430000580D /* YBTextPicker4.gif */; };
@@ -65,12 +70,16 @@
 		186B796F26F332440000580D /* blue_ic_checked.png in Resources */ = {isa = PBXBuildFile; fileRef = 186B795E26F332440000580D /* blue_ic_checked.png */; };
 		186DFA02271D8DD00026B61A /* LabsPatientDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186DFA01271D8DD00026B61A /* LabsPatientDetails.swift */; };
 		186DFA04271D8DEA0026B61A /* LabsPatientDetailsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186DFA03271D8DEA0026B61A /* LabsPatientDetailsTableCell.swift */; };
+		188039AF27B3F45B000319F8 /* gif_logout.gif in Resources */ = {isa = PBXBuildFile; fileRef = 188039AE27B3F45B000319F8 /* gif_logout.gif */; };
+		188039B127B3F462000319F8 /* success3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 188039B027B3F462000319F8 /* success3.gif */; };
+		1888AA0227B13F0E004AD6F6 /* Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1888AA0127B13F0E004AD6F6 /* Custom.swift */; };
 		18892444270DDF3300210789 /* OnMyWay.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18892443270DDF3200210789 /* OnMyWay.gif */; };
 		18892446270DE31900210789 /* 497-truck-delivery-outline.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18892445270DE31900210789 /* 497-truck-delivery-outline.gif */; };
+		188D37CF27ABEB4F00A81453 /* AllNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188D37CE27ABEB4F00A81453 /* AllNotifications.swift */; };
+		188D37D127ABEB6D00A81453 /* AllNotificatinsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188D37D027ABEB6D00A81453 /* AllNotificatinsTableCell.swift */; };
 		18982AE1270C408700B65881 /* Success.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18982AE0270C408700B65881 /* Success.swift */; };
 		18982AE4270C41E400B65881 /* success1.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18982AE2270C41E400B65881 /* success1.gif */; };
 		18982AE5270C41E400B65881 /* success2.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18982AE3270C41E400B65881 /* success2.gif */; };
-		18982AE7270C44C300B65881 /* success3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18982AE6270C44C300B65881 /* success3.gif */; };
 		18D1CAAA270ECBA9000E1815 /* SupplierOrderHistoryDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D1CAA9270ECBA9000E1815 /* SupplierOrderHistoryDetails.swift */; };
 		18D1CAAC270ECBC6000E1815 /* SupplierOrderHistoryDetailsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D1CAAB270ECBC6000E1815 /* SupplierOrderHistoryDetailsTableCell.swift */; };
 		18DF603D2701A81B002C284E /* AddNewNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DF603C2701A81B002C284E /* AddNewNote.swift */; };
@@ -174,7 +183,6 @@
 		89FC170A26CA576200118BE3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC170926CA576200118BE3 /* AppDelegate.swift */; };
 		89FC170C26CA576200118BE3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC170B26CA576200118BE3 /* SceneDelegate.swift */; };
 		89FC170E26CA576200118BE3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC170D26CA576200118BE3 /* ViewController.swift */; };
-		89FC171126CA576300118BE3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89FC170F26CA576300118BE3 /* Main.storyboard */; };
 		89FC171326CA576F00118BE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89FC171226CA576F00118BE3 /* Assets.xcassets */; };
 		89FC171626CA576F00118BE3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89FC171426CA576F00118BE3 /* LaunchScreen.storyboard */; };
 		89FC172126CA576F00118BE3 /* E_health_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC172026CA576F00118BE3 /* E_health_AppTests.swift */; };
@@ -183,6 +191,8 @@
 		89FC174726CA8E8C00118BE3 /* logInVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC174626CA8E8C00118BE3 /* logInVC.swift */; };
 		89FC175026CA954C00118BE3 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FC174F26CA954C00118BE3 /* Utils.swift */; };
 		8FF4E81ECFD66D36C1AFC4B5 /* Pods_E_health_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E140466E485744F11F1FC9 /* Pods_E_health_App.framework */; };
+		B95A97C828FEC3FD00893072 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B95A97C728FEC3FD00893072 /* Main.storyboard */; };
+		B9648A8E2907CAAC00DE914F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B9648A8D2907CAAC00DE914F /* GoogleService-Info.plist */; };
 		CECB0F2A0DFA4FF3127C1CEC /* Pods_E_health_App_E_health_AppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B909098F1BACD4FC46750999 /* Pods_E_health_App_E_health_AppUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -204,10 +214,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		18056DBD27203E01001455EB /* RPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RPicker.swift; path = "../../../../../../Third_Party/RPicker-master/RPicker/RPicker.swift"; sourceTree = "<group>"; };
+		1814913327A7BD6F00409352 /* RPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPicker.swift; sourceTree = "<group>"; };
+		1814913627A7BE4F00409352 /* gif_alert.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = gif_alert.gif; sourceTree = "<group>"; };
 		181858A226F89C9500EB511C /* PatientEhealthCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientEhealthCard.swift; sourceTree = "<group>"; };
 		181858A526F8BF1000EB511C /* PatientPrescriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientPrescriptionList.swift; sourceTree = "<group>"; };
 		181858A726F8BF2D00EB511C /* PatientPrescriptionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientPrescriptionTableCell.swift; sourceTree = "<group>"; };
+		1818C7B527B0EF60000ED15A /* Reports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reports.swift; sourceTree = "<group>"; };
+		1818C7B727B0EF78000ED15A /* ReportsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsTableCell.swift; sourceTree = "<group>"; };
 		1819654E26F9C70400B32162 /* PatientPrescriptionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientPrescriptionDetails.swift; sourceTree = "<group>"; };
 		1819655026F9C71300B32162 /* PatientPrescriptionDetailsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatientPrescriptionDetailsTableCell.swift; sourceTree = "<group>"; };
 		181A244726F34F76003648AB /* BuyNow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyNow.swift; sourceTree = "<group>"; };
@@ -215,6 +228,8 @@
 		181A244B26F37428003648AB /* CTotalCartList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CTotalCartList.swift; sourceTree = "<group>"; };
 		181A9D6526F6087500A98D3F /* CEditTotalTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEditTotalTableCell.swift; sourceTree = "<group>"; };
 		181A9D6626F6087500A98D3F /* CEditProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEditProfile.swift; sourceTree = "<group>"; };
+		1824480127B39C9500C7CC2B /* PharmacyPrescriptionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyPrescriptionList.swift; sourceTree = "<group>"; };
+		1824480327B39CC100C7CC2B /* PharmacyPrescriptionListTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyPrescriptionListTableCell.swift; sourceTree = "<group>"; };
 		182870A926F87F050075FDFA /* ShowImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowImage.swift; sourceTree = "<group>"; };
 		1829BC11270C63BC005A7C46 /* OrderItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItems.swift; sourceTree = "<group>"; };
 		1829BC13270C63CE005A7C46 /* OrderItemsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderItemsTableCell.swift; sourceTree = "<group>"; };
@@ -228,7 +243,6 @@
 		184669A327105E2B00FD26A3 /* 19-magnifier-zoom-search-outline.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "19-magnifier-zoom-search-outline.gif"; sourceTree = "<group>"; };
 		184669A527105E3300FD26A3 /* search.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = search.gif; sourceTree = "<group>"; };
 		184669A72710637500FD26A3 /* search1.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = search1.gif; sourceTree = "<group>"; };
-		184669A927106A5000FD26A3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		184669AB27106E9500FD26A3 /* E health App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "E health App.entitlements"; sourceTree = "<group>"; };
 		1852C49B270D889000FBFF04 /* plus-button.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "plus-button.gif"; sourceTree = "<group>"; };
 		1852C49D270D88AC00FBFF04 /* 213-arrow-2-rounded.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "213-arrow-2-rounded.gif"; sourceTree = "<group>"; };
@@ -242,6 +256,7 @@
 		1852C4A7270D8AD700FBFF04 /* LeftPaddingTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeftPaddingTextField.swift; sourceTree = "<group>"; };
 		18539ADA2721915F00025A26 /* PharmacyPatientsPrescriptionsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyPatientsPrescriptionsList.swift; sourceTree = "<group>"; };
 		18539ADC272191A600025A26 /* PharmacyPatientPrescriptionsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyPatientPrescriptionsTableCell.swift; sourceTree = "<group>"; };
+		1854670B27ABCD3900D30285 /* gif_trash.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = gif_trash.gif; sourceTree = "<group>"; };
 		185B994B27156A19007E9AD9 /* MedicalHistoryAddImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalHistoryAddImage.swift; sourceTree = "<group>"; };
 		185B994D27156A3E007E9AD9 /* MedicalHistoryAddImagesCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicalHistoryAddImagesCollectionCell.swift; sourceTree = "<group>"; };
 		186B794E26F332430000580D /* YBTextPicker4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = YBTextPicker4.gif; sourceTree = "<group>"; };
@@ -263,12 +278,16 @@
 		186B795E26F332440000580D /* blue_ic_checked.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_ic_checked.png; sourceTree = "<group>"; };
 		186DFA01271D8DD00026B61A /* LabsPatientDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabsPatientDetails.swift; sourceTree = "<group>"; };
 		186DFA03271D8DEA0026B61A /* LabsPatientDetailsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabsPatientDetailsTableCell.swift; sourceTree = "<group>"; };
+		188039AE27B3F45B000319F8 /* gif_logout.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = gif_logout.gif; sourceTree = "<group>"; };
+		188039B027B3F462000319F8 /* success3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = success3.gif; sourceTree = "<group>"; };
+		1888AA0127B13F0E004AD6F6 /* Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Custom.swift; sourceTree = "<group>"; };
 		18892443270DDF3200210789 /* OnMyWay.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = OnMyWay.gif; sourceTree = "<group>"; };
 		18892445270DE31900210789 /* 497-truck-delivery-outline.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "497-truck-delivery-outline.gif"; sourceTree = "<group>"; };
+		188D37CE27ABEB4F00A81453 /* AllNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNotifications.swift; sourceTree = "<group>"; };
+		188D37D027ABEB6D00A81453 /* AllNotificatinsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllNotificatinsTableCell.swift; sourceTree = "<group>"; };
 		18982AE0270C408700B65881 /* Success.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Success.swift; sourceTree = "<group>"; };
 		18982AE2270C41E400B65881 /* success1.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = success1.gif; sourceTree = "<group>"; };
 		18982AE3270C41E400B65881 /* success2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = success2.gif; sourceTree = "<group>"; };
-		18982AE6270C44C300B65881 /* success3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = success3.gif; sourceTree = "<group>"; };
 		18D1CAA9270ECBA9000E1815 /* SupplierOrderHistoryDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplierOrderHistoryDetails.swift; sourceTree = "<group>"; };
 		18D1CAAB270ECBC6000E1815 /* SupplierOrderHistoryDetailsTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplierOrderHistoryDetailsTableCell.swift; sourceTree = "<group>"; };
 		18DF603C2701A81B002C284E /* AddNewNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewNote.swift; sourceTree = "<group>"; };
@@ -378,7 +397,6 @@
 		89FC170926CA576200118BE3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89FC170B26CA576200118BE3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		89FC170D26CA576200118BE3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		89FC171026CA576300118BE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		89FC171226CA576F00118BE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		89FC171526CA576F00118BE3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89FC171726CA576F00118BE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -396,6 +414,8 @@
 		97C4C40D990CD8090653DE8D /* Pods-E health AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E health AppTests.release.xcconfig"; path = "Target Support Files/Pods-E health AppTests/Pods-E health AppTests.release.xcconfig"; sourceTree = "<group>"; };
 		B2E140466E485744F11F1FC9 /* Pods_E_health_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E_health_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B909098F1BACD4FC46750999 /* Pods_E_health_App_E_health_AppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_E_health_App_E_health_AppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B95A97C728FEC3FD00893072 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		B9648A8D2907CAAC00DE914F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D873DB2C5D9E582D048A67B0 /* Pods-E health AppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-E health AppTests.debug.xcconfig"; path = "Target Support Files/Pods-E health AppTests/Pods-E health AppTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -427,6 +447,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1814913527A7BE4100409352 /* GIFicons */ = {
+			isa = PBXGroup;
+			children = (
+				1814913627A7BE4F00409352 /* gif_alert.gif */,
+				1854670B27ABCD3900D30285 /* gif_trash.gif */,
+				188039AE27B3F45B000319F8 /* gif_logout.gif */,
+				188039B027B3F462000319F8 /* success3.gif */,
+			);
+			path = GIFicons;
+			sourceTree = "<group>";
+		};
 		181858A126F89C7700EB511C /* PatientEHealthCart */ = {
 			isa = PBXGroup;
 			children = (
@@ -442,6 +473,16 @@
 				181858A726F8BF2D00EB511C /* PatientPrescriptionTableCell.swift */,
 			);
 			path = PatienttPrescriptionList;
+			sourceTree = "<group>";
+		};
+		1818C7B427B0EF52000ED15A /* Reports */ = {
+			isa = PBXGroup;
+			children = (
+				1818C7B527B0EF60000ED15A /* Reports.swift */,
+				1818C7B727B0EF78000ED15A /* ReportsTableCell.swift */,
+				1888AA0027B13EFA004AD6F6 /* Custom */,
+			);
+			path = Reports;
 			sourceTree = "<group>";
 		};
 		1819654D26F9C6DC00B32162 /* PatientPrescriptionDetails */ = {
@@ -477,6 +518,15 @@
 				181A9D6526F6087500A98D3F /* CEditTotalTableCell.swift */,
 			);
 			path = EditProfile;
+			sourceTree = "<group>";
+		};
+		1824480027B39C0100C7CC2B /* PharmacyPrescription */ = {
+			isa = PBXGroup;
+			children = (
+				1824480127B39C9500C7CC2B /* PharmacyPrescriptionList.swift */,
+				1824480327B39CC100C7CC2B /* PharmacyPrescriptionListTableCell.swift */,
+			);
+			path = PharmacyPrescription;
 			sourceTree = "<group>";
 		};
 		182870A826F87EE00075FDFA /* ShowImage */ = {
@@ -591,12 +641,28 @@
 			path = LabsPatient;
 			sourceTree = "<group>";
 		};
+		1888AA0027B13EFA004AD6F6 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				1888AA0127B13F0E004AD6F6 /* Custom.swift */,
+			);
+			path = Custom;
+			sourceTree = "<group>";
+		};
+		188D37CD27ABEAE800A81453 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				188D37CE27ABEB4F00A81453 /* AllNotifications.swift */,
+				188D37D027ABEB6D00A81453 /* AllNotificatinsTableCell.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
 		18982ADF270C407A00B65881 /* Success */ = {
 			isa = PBXGroup;
 			children = (
 				18982AE2270C41E400B65881 /* success1.gif */,
 				18982AE3270C41E400B65881 /* success2.gif */,
-				18982AE6270C44C300B65881 /* success3.gif */,
 				18982AE0270C408700B65881 /* Success.swift */,
 			);
 			path = Success;
@@ -708,6 +774,7 @@
 		893DB47126D8BBF600E2C5C5 /* PharmacyProfile */ = {
 			isa = PBXGroup;
 			children = (
+				1824480027B39C0100C7CC2B /* PharmacyPrescription */,
 				18539AD92721913B00025A26 /* PharmacyPatientPrescriptions */,
 				89F9B09C26DCC8C000D52EF1 /* PPSupplierDetails */,
 				896FD38E26DCB545009E6D0E /* PPOrderDetails */,
@@ -738,6 +805,8 @@
 		893DF51A26D3AE0A005E628B /* CommonClasses */ = {
 			isa = PBXGroup;
 			children = (
+				1818C7B427B0EF52000ED15A /* Reports */,
+				188D37CD27ABEAE800A81453 /* Notifications */,
 				181A9D6426F6086700A98D3F /* EditProfile */,
 				896E37AF26CB7E4700E71F51 /* RegisterOption */,
 				89FC173F26CA5CB400118BE3 /* welcome */,
@@ -1080,7 +1149,7 @@
 		899BB5D926D7662C0045163B /* Picker */ = {
 			isa = PBXGroup;
 			children = (
-				18056DBD27203E01001455EB /* RPicker.swift */,
+				1814913327A7BD6F00409352 /* RPicker.swift */,
 			);
 			path = Picker;
 			sourceTree = "<group>";
@@ -1180,6 +1249,7 @@
 		89EE8B7326CE421B000A690C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				1814913527A7BE4100409352 /* GIFicons */,
 				1852C49F270D8AC100FBFF04 /* AlertPopup */,
 				186B794D26F332260000580D /* YBText */,
 				18E40D7226EF399C001B1519 /* Indicator */,
@@ -1270,11 +1340,11 @@
 				89FC170926CA576200118BE3 /* AppDelegate.swift */,
 				89FC170B26CA576200118BE3 /* SceneDelegate.swift */,
 				89FC170D26CA576200118BE3 /* ViewController.swift */,
-				89FC170F26CA576300118BE3 /* Main.storyboard */,
+				B95A97C728FEC3FD00893072 /* Main.storyboard */,
 				89FC171226CA576F00118BE3 /* Assets.xcassets */,
 				89FC171426CA576F00118BE3 /* LaunchScreen.storyboard */,
 				89FC171726CA576F00118BE3 /* Info.plist */,
-				184669A927106A5000FD26A3 /* GoogleService-Info.plist */,
+				B9648A8D2907CAAC00DE914F /* GoogleService-Info.plist */,
 			);
 			path = "E health App";
 			sourceTree = "<group>";
@@ -1413,6 +1483,7 @@
 		89FC16FE26CA576200118BE3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
@@ -1456,14 +1527,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				184669A627105E3300FD26A3 /* search.gif in Resources */,
+				188039AF27B3F45B000319F8 /* gif_logout.gif in Resources */,
 				18982AE5270C41E400B65881 /* success2.gif in Resources */,
 				18982AE4270C41E400B65881 /* success1.gif in Resources */,
 				186B796F26F332440000580D /* blue_ic_checked.png in Resources */,
-				184669AA27106A5000FD26A3 /* GoogleService-Info.plist in Resources */,
 				186B796026F332440000580D /* YBTextPicker_unchecked.png in Resources */,
+				1814913727A7BE4F00409352 /* gif_alert.gif in Resources */,
 				89FC171626CA576F00118BE3 /* LaunchScreen.storyboard in Resources */,
 				18F8D32826FDB4D9006E78E9 /* Shutter sound.mp3 in Resources */,
 				186B796A26F332440000580D /* red_ic_unchecked.png in Resources */,
+				B95A97C828FEC3FD00893072 /* Main.storyboard in Resources */,
 				186B796E26F332440000580D /* YBTextPickerCell.xib in Resources */,
 				186B796C26F332440000580D /* green_ic_checked.png in Resources */,
 				186B796B26F332440000580D /* YBTextPicker3.gif in Resources */,
@@ -1475,13 +1548,14 @@
 				186B796226F332440000580D /* YBTextPicker_checked.png in Resources */,
 				186B796326F332440000580D /* YBTextPicker1.gif in Resources */,
 				186B796626F332440000580D /* YBTextPicker2.gif in Resources */,
-				89FC171126CA576300118BE3 /* Main.storyboard in Resources */,
+				188039B127B3F462000319F8 /* success3.gif in Resources */,
 				18892444270DDF3300210789 /* OnMyWay.gif in Resources */,
-				18982AE7270C44C300B65881 /* success3.gif in Resources */,
 				186B796726F332440000580D /* YBTextPicker_Logo.png in Resources */,
 				184669A427105E2B00FD26A3 /* 19-magnifier-zoom-search-outline.gif in Resources */,
+				B9648A8E2907CAAC00DE914F /* GoogleService-Info.plist in Resources */,
 				186B795F26F332440000580D /* YBTextPicker4.gif in Resources */,
 				18892446270DE31900210789 /* 497-truck-delivery-outline.gif in Resources */,
+				1854670C27ABCD3900D30285 /* gif_trash.gif in Resources */,
 				186B796926F332440000580D /* green_ic_unchecked.png in Resources */,
 				186B796826F332440000580D /* YBTextPicker.xib in Resources */,
 			);
@@ -1621,6 +1695,7 @@
 				89A3C5F526DDFD8D007D83E3 /* DPAppointmentsVC.swift in Sources */,
 				894C86D826E73E9400A0ACCE /* PPAppointmentHospitalListVC.swift in Sources */,
 				89DCCB6926CB904300DF0A7C /* registerVC.swift in Sources */,
+				1824480227B39C9500C7CC2B /* PharmacyPrescriptionList.swift in Sources */,
 				8971E17826E2122300069B0A /* PPDashboardVC.swift in Sources */,
 				18D1CAAC270ECBC6000E1815 /* SupplierOrderHistoryDetailsTableCell.swift in Sources */,
 				893DB47F26D8D2E700E2C5C5 /* PPPatientPrescriptionVC.swift in Sources */,
@@ -1631,6 +1706,7 @@
 				8967A71B26E89B0F008C3136 /* PPAppointmentDetailsTableViewCell.swift in Sources */,
 				186B796526F332440000580D /* YBTextPickerDataModel.swift in Sources */,
 				8920CEB426D65F8D006DB677 /* AddNewPatientVC.swift in Sources */,
+				188D37CF27ABEB4F00A81453 /* AllNotifications.swift in Sources */,
 				89DCCB7126CB963800DF0A7C /* registerOptionTableViewCell.swift in Sources */,
 				18F76FC026FDB38F002148E8 /* CroppableImageView.swift in Sources */,
 				8967A73F26E8ADE3008C3136 /* HPRegisterTableViewCell.swift in Sources */,
@@ -1640,7 +1716,6 @@
 				89DCCB7926CBA02000DF0A7C /* registerTableViewCell.swift in Sources */,
 				8971B15426CCF0B200AB6A14 /* dashboardVC.swift in Sources */,
 				1852C4AB270D8AD700FBFF04 /* NewYorkButton.swift in Sources */,
-				18056DBE27203E02001455EB /* RPicker.swift in Sources */,
 				1845D9CC26FB5BCA00A4CCBE /* DPAppointmentTableCell.swift in Sources */,
 				89EE8B7C26CE4292000A690C /* SWRevealViewController.m in Sources */,
 				18EAA2FF270F089C00D9CF48 /* AddMoreMedicines.swift in Sources */,
@@ -1659,6 +1734,7 @@
 				8997A65426D4DCFE00D985FE /* PatientMedicalHistoryDetailsTableViewCell.swift in Sources */,
 				89F9B0AD26DCF3E700D52EF1 /* DPRegisterVC.swift in Sources */,
 				8967A6D626E75D02008C3136 /* PPBookAppointmentVC.swift in Sources */,
+				1824480427B39CC100C7CC2B /* PharmacyPrescriptionListTableCell.swift in Sources */,
 				8971B15F26CCF31C00AB6A14 /* dashboardTableViewCell.swift in Sources */,
 				893FB54F26D1137C00BD94B6 /* helpVC.swift in Sources */,
 				1819654F26F9C70400B32162 /* PatientPrescriptionDetails.swift in Sources */,
@@ -1674,6 +1750,7 @@
 				1852C4A9270D8AD700FBFF04 /* NewYorkAlertController.swift in Sources */,
 				893FB54026D0DDDF00BD94B6 /* orderHistoryTableViewCell.swift in Sources */,
 				186B796126F332440000580D /* YBTextPicker.swift in Sources */,
+				1818C7B627B0EF60000ED15A /* Reports.swift in Sources */,
 				89B9F63426D62B370024FAF0 /* PatientVC.swift in Sources */,
 				893FB55826D1165D00BD94B6 /* forgotPasswordVC.swift in Sources */,
 				896A9A0D26E0FA40008803D8 /* HPPharmacyTableViewCell.swift in Sources */,
@@ -1695,6 +1772,7 @@
 				181858A826F8BF2D00EB511C /* PatientPrescriptionTableCell.swift in Sources */,
 				1845D9CA26FB468D00A4CCBE /* AddImagesCollectionCell.swift in Sources */,
 				8967A6DE26E75D1E008C3136 /* PPBookAppointmentTableViewCell.swift in Sources */,
+				188D37D127ABEB6D00A81453 /* AllNotificatinsTableCell.swift in Sources */,
 				1852C4AE270D8AD700FBFF04 /* ActionSheetView.swift in Sources */,
 				8920CEBC26D65FE5006DB677 /* AddNewPatientTableViewCell.swift in Sources */,
 				896E37B126CB7E7A00E71F51 /* registerOptionVC.swift in Sources */,
@@ -1707,6 +1785,7 @@
 				185B994E27156A3E007E9AD9 /* MedicalHistoryAddImagesCollectionCell.swift in Sources */,
 				8971E18326E24F5F00069B0A /* PPAppointmentsVC.swift in Sources */,
 				896A9A0526E0FA24008803D8 /* HPPharmacyVC.swift in Sources */,
+				1814913427A7BD6F00409352 /* RPicker.swift in Sources */,
 				181A9D6726F6087500A98D3F /* CEditTotalTableCell.swift in Sources */,
 				89FC174126CA5CE800118BE3 /* welcomeVC.swift in Sources */,
 				893FB54626D10A7300BD94B6 /* changePasswordVC.swift in Sources */,
@@ -1730,6 +1809,7 @@
 				8967A73126E8A414008C3136 /* DLRegisterVC.swift in Sources */,
 				18F76FBD26FDB386002148E8 /* CornerpointClientProtocol.swift in Sources */,
 				1852C4AA270D8AD700FBFF04 /* Color.swift in Sources */,
+				1888AA0227B13F0E004AD6F6 /* Custom.swift in Sources */,
 				186B796426F332440000580D /* YBTextPickerCell.swift in Sources */,
 				895CC29526CFCDF6000CF789 /* inventoryDetailsVC.swift in Sources */,
 				89F9B09E26DCC8EB00D52EF1 /* PPSupplierDetailsVC.swift in Sources */,
@@ -1738,6 +1818,7 @@
 				18F76FBC26FDB386002148E8 /* CornerpointView.swift in Sources */,
 				89FC174726CA8E8C00118BE3 /* logInVC.swift in Sources */,
 				1829BC14270C63CE005A7C46 /* OrderItemsTableCell.swift in Sources */,
+				1818C7B827B0EF78000ED15A /* ReportsTableCell.swift in Sources */,
 				18EAA306270F1FEA00D9CF48 /* ListOfAllMedicinesTableCell.swift in Sources */,
 				899BB5E326D776BA0045163B /* MedicalHistoryTableViewCell.swift in Sources */,
 				8967A6E426E77B09008C3136 /* PPBookAppointmentSelectDoctorVC.swift in Sources */,
@@ -1789,14 +1870,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		89FC170F26CA576300118BE3 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				89FC171026CA576300118BE3 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		89FC171426CA576F00118BE3 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1937,13 +2010,15 @@
 				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = NHVZESNL9B;
 				INFOPLIST_FILE = "E health App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "E-Health";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.ehealthapp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dev.e-health";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "E health App/Contollers/ThirdParty/SideBarMenu/E health App-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1965,13 +2040,15 @@
 				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = NHVZESNL9B;
 				INFOPLIST_FILE = "E health App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_KEY_CFBundleDisplayName = "E-Health";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.test.ehealthapp;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.dev.e-health";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "E health App/Contollers/ThirdParty/SideBarMenu/E health App-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

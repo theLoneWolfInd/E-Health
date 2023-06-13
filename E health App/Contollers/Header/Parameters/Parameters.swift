@@ -4,6 +4,38 @@ import UIKit
 
 
 
+
+
+// MARK: - Welcome -
+struct Employees: Decodable {
+    let status: String
+    let data: [EmployeeData]
+}
+
+// MARK: - Datum -
+struct EmployeeData: Decodable {
+    
+    let id, employeeName, employeeSalary, employeeAge , profileImage: String
+    // let profileImage: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case employeeName = "employee_name"
+        case employeeSalary = "employee_salary"
+        case employeeAge = "employee_age"
+        case profileImage = "profile_image"
+    }
+    
+}
+    
+    
+    
+    
+    
+    
+    
+    
+
 // edit with image
 struct EditUserWithImage: Encodable {
     let action: String
@@ -34,6 +66,21 @@ struct Order_Details_WB: Encodable {
     let action: String
     let orderId: String
     let supplierId: String
+}
+
+struct update_device_token_status: Encodable {
+    let action: String
+    let userId: String
+    let deviceToken: String
+}
+
+struct New_Hospital_Medical_History: Encodable {
+    let action: String
+    let userId: String
+    let doctorId: String
+    let hospitalId: String
+    let login_id: String
+    let type: String
 }
 
 // MARK:- HOSPITAL PARAMS -
@@ -118,6 +165,27 @@ struct LoginParam: Encodable {
     let deviceToken: String
     let latitude: String
     let longitude: String
+}
+
+struct register_pharmacy_new: Encodable {
+    let action: String
+    let addedBy: String
+    let username: String
+    let fullName: String
+    let email: String
+    let contactNumber: String
+    let password: String
+    let address: String
+    let practiceDate: String
+    let department: String
+    let specialty: String
+    let device: String
+    let role: String
+    let latitude: String
+    let longitude: String
+    let countryId:String
+    let open_time:String
+    let close_time:String
 }
 
 struct DoctorsList: Encodable {
@@ -262,6 +330,37 @@ struct AddPatient: Encodable {
     let gender: String
     let fee_Paid_for_M_card:String
     let address:String
+    let Disease:String
+}
+
+struct EditPatient_2: Encodable {
+    let action: String
+    let addedBy: String
+    let userId: String
+    let registeredDt: String
+    let medicalCardID: String
+    let fullName: String
+    let middleName: String
+    let lastName: String
+    let dob: String
+    let username: String
+    let email: String
+    let contactNumber: String
+    let password: String
+    let city: String
+    let height: String
+    let eyeColor: String
+    let securityNumber:String
+    let zipCode: String
+    let countryId: String
+    let device: String
+    let role: String
+    let latitude: String
+    let longitude: String
+    let gender: String
+    let fee_Paid_for_M_card:String
+    let address:String
+    let Disease:String
 }
 
 struct EditPatient: Encodable {
@@ -396,9 +495,12 @@ struct SaveOrderAfterPayment: Encodable {
 // action : orderhistory( )
 // userId :
 
-struct OrderHistory: Encodable {
+struct order_history: Encodable {
     let action: String
     let userId: String
+    let start_date: String
+    let end_date: String
+    let keyword: String
 }
 
 // PATIENT
@@ -406,7 +508,9 @@ struct Patient_Appoitment_List: Encodable {
     let action: String
     let userId: String
     let type: String
-    let Adate: String
+    let start_date: String
+    let end_date: String
+    let keyword: String
 }
 
 /*
@@ -418,6 +522,17 @@ struct Patient_Appoitment_List: Encodable {
      [ATime] => Select Date
  */
 
+/*
+ Patient_Book_Appoitment
+ [action] => addappointment
+     [userId] => 342
+     [hospitalId] => 347
+     [doctorId] => 349
+     [Adate] => 2021-11-19
+     [ATime] => 2:57 PM
+     [notes] => purnima test
+ */
+
 struct Patient_Book_Appoitment: Encodable {
     let action: String
     let userId: String
@@ -425,6 +540,7 @@ struct Patient_Book_Appoitment: Encodable {
     let doctorId: String
     let Adate: String
     let ATime: String
+    let notes: String
 }
 
 struct MedicalHistory: Encodable {
@@ -476,6 +592,14 @@ struct Doctor_Add_Notes: Encodable {
     let content: String
     let appointmentId: String
 }
+ 
+// MARK: - delete medicine -
+struct delete_medicine: Encodable {
+    let action: String
+    let diseaseId: String
+    let supplier_id: String
+    let medicine_id: String
+}
 
 // notes list
 struct Doctor_All_Notes_List: Encodable {
@@ -520,6 +644,7 @@ struct Mark_As_Delivered: Encodable {
     let action: String
     let orderId:String
     let delivery_status: String
+    let supplierId: String
 }
 
 struct Add_Medicine_Without_Image: Encodable {
@@ -611,6 +736,121 @@ struct ask_permission_for_patient_prescription: Encodable {
     let login_id: String
     let hospitalId: String
     let prescriptionId: String
+}
+
+struct get_medical_history_all_questions: Encodable {
+    let action , userId , login_id: String
+    // let userId: String
+    // let login_id: String
+    
+}
+
+struct list_of_all_medical_history_questions: Encodable {
+    let action: String
+    
+}
+
+struct add_answer_to_medical_history: Encodable {
+    let action: String
+    let userId: String
+    let answerJson: String
+    
+}
+
+struct request_access_medical_history: Encodable {
+    let action: String
+    let userId: String
+    let login_id: String
+    
+}
+
+struct all_notifications: Encodable {
+    let action: String
+    let userId: String
+    let role: String
+    
+}
+
+struct status_change_test_from_notification: Encodable {
+    let action: String
+    let userId: String
+    let hospitalId: String
+    let testId: String
+    let request_reply: String
+}
+
+struct get_all_patient_list: Encodable {
+    let action: String
+    let role: String
+    let addedBy: String
+    let start_date: String
+    let end_date: String
+    let paid: String
+    let keyword: String
+}
+
+/*
+ [action] => userlist
+     [role] => Patient
+     [addedBy] => 341
+     [start_date] =>
+     [end_date] =>
+     [paid] =>
+     [keyword] =>
+ */
+
+/*
+ "action" : "classifiedlist",
+  "userId" : "15",
+  "type" : "ALL",
+  "pageNo" : "1"
+ */
+struct dummy_trust_me: Encodable {
+    let action: String
+    let userId: String
+    let type: String
+    let pageNo: String
+}
+
+struct test_or_prescription: Encodable {
+    let action: String
+    let userId: String
+    let start_date: String
+    let end_date: String
+    let keyword: String
+}
+
+struct list_of_all_medicines_product_list: Encodable {
+    let action: String
+    let userId: String
+    let diseaseId: String
+    let supplierId: String
+}
+
+struct test_list_permission_from_lab_profile: Encodable {
+    let action: String
+    let userId: String
+    let doctorId: String
+    let appointmentId: String
+    let login_id: String
+}
+
+/*
+ [action] => requesttest
+     [userId] => 395
+     [hospitalId] => 347
+     [testId] => 36
+     [login_id] => 350
+     [appointmentId] => 68
+ */
+
+struct send_test_request_to_patient: Encodable {
+    let action: String
+    let userId: String
+    let hospitalId: String
+    let testId: String
+    let login_id: String
+    let appointmentId: String
 }
 
 class Parameters: UIViewController {

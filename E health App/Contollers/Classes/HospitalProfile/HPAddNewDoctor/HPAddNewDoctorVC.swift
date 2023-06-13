@@ -74,7 +74,7 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
         
         self.btnNaviagtionBack.addTarget(self, action: #selector(backClickMethod), for: .touchUpInside)
         
-        // print(self.getDoctorDetails as Any)
+         // print(self.getDoctorDetails as Any)
         
         // image one
         let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(HPAddNewDoctorVC.cellTappedMethod1(_:)))
@@ -113,7 +113,12 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
             
             if self.strProfileForEdit == "yes" { // for edit
                 
-                self.editNewData(strRole: "Doctor")
+                if self.imageStr == "1" {
+                    self.addDataWithImage(strRole: "Doctor")
+                } else {
+                    self.editNewData(strRole: "Doctor")
+                }
+                
                 
             } else if self.imageStr == "0" { // for add
                 
@@ -472,7 +477,8 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
             parameterDict.setValue(String(strRole), forKey: "role")
             parameterDict.setValue(String(""), forKey: "latitude")
             parameterDict.setValue(String(""), forKey: "longitude")
-            
+            parameterDict.setValue(String(self.strSaveSelectedCountryId), forKey: "countryId")
+        
             
             //Set Image Data
             // let imgData = self.img_photo.image!.jpegData(compressionQuality: 0.5)!
@@ -524,7 +530,6 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
                             print("Success!")
                             print(dictionary)
                             
-                            
                             ERProgressHud.sharedInstance.hide()
                             self.imageStr = "0"
                             
@@ -558,8 +563,6 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
                 })
             
         }}
-    
-    
     
     @objc func countryListWebSer() {
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please Wait...")
@@ -595,7 +598,7 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
                     
                     
                 }
-                else{
+                else {
                     print("no")
                     ERProgressHud.sharedInstance.hide()
                     
@@ -633,7 +636,7 @@ class HPAddNewDoctorVC: UIViewController , UINavigationControllerDelegate , UIIm
             checkMarkPosition   : .Right,
             itemCheckedImage    : UIImage(named:"red_ic_checked"),
             itemUncheckedImage  : UIImage(named:"red_ic_unchecked"),
-            itemColor           : .black,
+            itemColor           : .blue,
             itemFont            : regularFont
         )
         

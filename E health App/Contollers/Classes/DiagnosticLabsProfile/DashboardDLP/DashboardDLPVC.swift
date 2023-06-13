@@ -122,6 +122,8 @@ class DashboardDLPVC: UIViewController,UITableViewDataSource, UITableViewDelegat
             cell.imgBanner.image = UIImage(named: "background")
             cell.imgProfile.image = UIImage(named: "daze")
 
+            // cell.btnRqstSupplier.addTarget(self, action: #selector(request_supplier_click_method), for: .touchUpInside)
+            
             cell.imgProfile.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
             cell.imgProfile.sd_setImage(with: URL(string: (self.dictSupplierLoginData["image"] as! String)), placeholderImage: UIImage(named: "1024"))
             
@@ -189,11 +191,22 @@ class DashboardDLPVC: UIViewController,UITableViewDataSource, UITableViewDelegat
             cell.selectedBackgroundView = backgroundView
 
             cell.btnAllPatient.addTarget(self, action: #selector(allPatientsClickMethod), for: .touchUpInside)
-            cell.btnRqstSupplier.addTarget(self, action: #selector(allTestClickMethod), for: .touchUpInside)
+            cell.btnRqstSupplier.addTarget(self, action: #selector(request_supplier_click_method), for: .touchUpInside)
             
             return cell
         }
     }
+    
+    @objc func request_supplier_click_method() {
+        
+        // let item = self.arrListOfAllDisease[indexPath.row] as? [String:Any]
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "selectDiseaseVC") as? selectDiseaseVC
+        // push!.strWhereAreYouFrom = "supplierProfile"
+        // push!.dictGetClickedDiseaseData = item as NSDictionary?
+        self.navigationController?.pushViewController(push!, animated: true)
+        
+    }
+    
     @objc func allPatientsClickMethod() {
         
         let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDoctorsVC") as? HPDoctorsVC

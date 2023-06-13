@@ -109,7 +109,6 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                 
             } else {
                 
-                
                 /*appointmentId = 110;
                  created = "2021-09-24T17:15:10+0530";
                  doctorId = 192;
@@ -312,6 +311,7 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                     "image" : "",
                     "content" : String(self.strSaveTestName),
                     "testId" : "",
+                    "date":"",
                     "tag"   : "addPicture"
                 ]
                     
@@ -336,7 +336,8 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                     let myDictionary2: [String:String] = [
                             
                         "image" : (item!["testImage"] as! String),
-                        "content" : (item!["content"] as! String),
+                        "content" : (item!["PatientfullName"] as! String)+" "+(item!["PatientLastName"] as! String),
+                        "date":(item!["created"] as! String),
                         "testId" : String(myString5),
                         "tag"   : ""
                     ]
@@ -351,6 +352,7 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                     "image" : "",
                     "content" : String(self.strSaveTestName),
                     "testId" : "",
+                    "date":"",
                     "tag"   : "addPicture"
                 ]
                 
@@ -447,28 +449,8 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                     }
                     
                 }
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                  
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             
         }
         
@@ -814,7 +796,8 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
                     break
                     
                 case .failure(_):
-                    print("failure")
+                    print(data.result)
+                    print(data.response)
                     ERProgressHud.sharedInstance.hide()
                     break
                     
@@ -858,8 +841,10 @@ class AddImages: UIViewController , UINavigationControllerDelegate , UIImagePick
             parameterDict.setValue(String(self.strSaveTestName), forKey: "content")
             
         } else {
+            
             parameterDict.setValue("editprescription", forKey: "action")
             parameterDict.setValue(String(self.strSavePrescriptionId), forKey: "prescriptionId")
+            
         }
         
         print(parameterDict as Any)
@@ -1023,6 +1008,9 @@ extension AddImages: UICollectionViewDelegate {
         cell.layer.cornerRadius = 6
         cell.clipsToBounds = true
         cell.backgroundColor = .clear
+        
+        // cell.layer.borderColor = UIColor.lightGray.cgColor
+        // cell.layer.borderWidth = 0.50
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             
@@ -1222,6 +1210,7 @@ extension AddImages: UICollectionViewDelegate {
                         
                         cell.imgProfile.image = UIImage(named: "add1")
                         cell.lblAddImageTitle.isHidden = true
+                        cell.lbl_Date.isHidden = true
                         
                     } else {
                         
@@ -1234,6 +1223,7 @@ extension AddImages: UICollectionViewDelegate {
                             cell.lblAddImageTitle.text = "N.A."
                         } else {
                             cell.lblAddImageTitle.text = (item!["content"] as! String)
+                            cell.lbl_Date.text = (item!["date"] as! String)
                         }
                         
                         

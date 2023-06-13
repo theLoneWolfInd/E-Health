@@ -8,8 +8,11 @@
 import UIKit
 import Alamofire
 import SDWebImage
+import SwiftyJSON
 
-class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
+class MedicalHistoryVC: UIViewController , UIScrollViewDelegate , UITextFieldDelegate , UITextViewDelegate {
+    
+    var arrOfTxtFields:[UITextField] = []
     
     var frame = CGRect(x: 0, y: 0, width: 0, height: 0)
     var screenSize: CGRect!
@@ -23,6 +26,11 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     
     var arrSaveImageForScroll:NSMutableArray = []
     
+    
+    var arr_list_of_medical_questions:NSMutableArray = []
+    
+    var  save_new_dob_value:String! = ""
+    
     // medical history id
     var strStoreMedicalHistoryId:String!
     
@@ -30,14 +38,27 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     
     var strMedicalHistoryFound:String! = "no"
     
+    var medical_history_edit_or_add:String!
+    
     var strIamFromBookedAppointment:String!
+    
+    var str_edit_patient:String!
+    
+    @IBOutlet weak var btn_submit:UIButton! {
+        didSet {
+            btn_submit.layer.cornerRadius = 0
+            btn_submit.clipsToBounds = true
+        }
+    }
+    
     @IBOutlet weak var viewNavigationBar:UIView!
     @IBOutlet weak var btnNaviagtionBack:UIButton! {
         didSet {
             
         }
     }
-    @IBOutlet weak var lblNavigationBar:UILabel!{
+    
+    @IBOutlet weak var lblNavigationBar:UILabel! {
         didSet {
             
             lblNavigationBar.text = "ADD MEDICAL HISTORY"
@@ -45,7 +66,7 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     }
     
     @IBOutlet weak var tablViw:UITableView!
-
+    
     
     var strCheckBoxMedication:String! = "n.a."
     var strCheckBoxAllergies:String! = "n.a."
@@ -55,20 +76,33 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.view.backgroundColor = .white
         self.navigationController?.isNavigationBarHidden = true
         
         tablViw.backgroundColor = .white
         
-        tablViw.delegate = self
-        tablViw.dataSource = self
+        // tablViw.delegate = self
+        // tablViw.dataSource = self
+        
+        self.tablViw.separatorColor = .clear
+        self.tablViw.alwaysBounceVertical = true
         
         btnNaviagtionBack.addTarget(self, action: #selector(btnNavigationBackPress), for: .touchUpInside)
         
-        print(self.getPatientRegistrationDetails as Any)
+        // print(self.getPatientRegistrationDetails as Any)
         
+        // print(self.getPatientRegistrationDetails as Any)
         
+        /*NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)*/
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+
+            //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
+            //tap.cancelsTouchesInView = false
+
+            view.addGestureRecognizer(tap)
         
         if let myLoadedString = UserDefaults.standard.string(forKey: "keySetToBackOrMenu") {
             print(myLoadedString)
@@ -88,37 +122,112 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
         }
         
         
+        self.btn_submit.addTarget(self, action: #selector(add_answer_wb), for: .touchUpInside)
         
+    }
+    
+    @objc override func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
+    /*func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
+        if scrollView == self.tablViw {
+            
+            self.view.endEditing(true)
+        }
+            
+    }*/
+    
+     
+    
+    @objc internal override func keyboardWillShow(notification: NSNotification) {
         
+        if let keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height {
+            print("Notification: Keyboard will show")
+            tablViw.setBottomInset(to: keyboardHeight)
+            
+        }
         
+        /*let info = notification.userInfo! as! [String: AnyObject],
+         kbSize = (info[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue.size,
+         contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: kbSize.height, right: 0)
+         
+         self.tablViw.contentInset = contentInsets
+         self.tablViw.scrollIndicatorInsets = contentInsets
+         
+         var aRect = self.tablViw.frame
+         aRect.size.height -= kbSize.height
+         */
+        
+        /*if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+         tablViw.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height + tablViw.rowHeight, right: 0)
+         }*/
+    }
+    
+    @objc internal override func keyboardWillHide(notification: NSNotification) {
+        tablViw.contentInset = .zero
+    }
+    
+    private func textViewShouldReturn(_ textField: UITextView) -> Bool {
+        self.view.endEditing(true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(MedicalHistoryVC.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MedicalHistoryVC.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             
             if (person["role"] as! String) == "Patient" {
                 
                 btnNaviagtionBack.isHidden = false
+                lblNavigationBar.text = "MEDICAL HISTORY"
+                // self.medicalHistoryWB()
                 
-                self.medicalHistoryWB()
+                // new
+                // self.new_medical_history_report_get()
+                self.new_medical_history_report_get_patient()
                 
-            } else if (person["role"] as! String) == "Hospital" || (person["role"] as! String) == "Lab" {
+                
+            } else if (person["role"] as! String) == "Hospital" ||
+                        (person["role"] as! String) == "Doctor" ||
+                        (person["role"] as! String) == "Lab" ||
+                        (person["role"] as! String) == "Pharmacy" {
                 
                 btnNaviagtionBack.isHidden = false
                 
-                 // let indexPath = IndexPath.init(row: 0, section: 0)
-                 // let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
+                // let indexPath = IndexPath.init(row: 0, section: 0)
+                // let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
                 
                 // cell.imgProfileImage.isHidden = true
                 
-                self.checkPatientMedicalHistoryFromHispitalSide()
+                // old
+                // self.checkPatientMedicalHistoryFromHispitalSide()
+                
+                // new
+                self.new_medical_history_report_get()
+                
+                
+                
+                
+                
+                
+                
             }
-            else if (person["role"] as! String) == "Pharmacy" {
-                self.medical_history_for_pharmacy_wb()
-            }
+            
+            /*else if (person["role"] as! String) == "Pharmacy" {
+             self.medical_history_for_pharmacy_wb()
+             }*/
             
         }
         
@@ -151,33 +260,33 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     @objc func validateBeforeAddMedicalHistory() {
         
         /*let indexPath = IndexPath.init(row: 0, section: 0)
-        let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
-        
-        if cell.txtDiseasename.text == "" {
-            
-            self.fieldShoulNotBeEmptyPopup(strTitle: "Disease name if any")
-            
-        } else if cell.txtGender.text == "" {
-            
-            self.fieldShoulNotBeEmptyPopup(strTitle: "What is your gender")
-            
-        } else if cell.txtAboutMedication.text == "" {
-            
-            self.fieldShoulNotBeEmptyPopup(strTitle: "About Medication")
-            
-        } else if cell.txtAboutMedicationAllergies.text == "" {
-            
-            self.fieldShoulNotBeEmptyPopup(strTitle: "About Medication Allergies")
-            
-        } else if cell.txtAboutHistoryDrug.text == "" {
-            
-            self.fieldShoulNotBeEmptyPopup(strTitle: "Any Drugs")
-            
-        } else {
-            
-            self.addPatientMedicalHistory()
-            
-        }*/
+         let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
+         
+         if cell.txtDiseasename.text == "" {
+         
+         self.fieldShoulNotBeEmptyPopup(strTitle: "Disease name if any")
+         
+         } else if cell.txtGender.text == "" {
+         
+         self.fieldShoulNotBeEmptyPopup(strTitle: "What is your gender")
+         
+         } else if cell.txtAboutMedication.text == "" {
+         
+         self.fieldShoulNotBeEmptyPopup(strTitle: "About Medication")
+         
+         } else if cell.txtAboutMedicationAllergies.text == "" {
+         
+         self.fieldShoulNotBeEmptyPopup(strTitle: "About Medication Allergies")
+         
+         } else if cell.txtAboutHistoryDrug.text == "" {
+         
+         self.fieldShoulNotBeEmptyPopup(strTitle: "Any Drugs")
+         
+         } else {
+         
+         self.addPatientMedicalHistory()
+         
+         }*/
         
         if self.isMedicalHistoryCreated == "1" {
             self.editMedicalHistoryWB()
@@ -215,9 +324,9 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
             
             
             /*
-              var strCheckBoxMedication:String!
-              var strCheckBoxAllergies:String!
-              var strCheckBoxDrugs:String!
+             var strCheckBoxMedication:String!
+             var strCheckBoxAllergies:String!
+             var strCheckBoxDrugs:String!
              */
             
             let params =  AddDPatientMedicalHistoryWithoutImage(action: "addmedicalhistory",
@@ -239,67 +348,67 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                        method: .post,
                        parameters: params,
                        encoder: JSONParameterEncoder.default).responseJSON { response in
-                        // debugPrint(response.result)
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = (JSON["status"]as Any as? String)?.lowercased()
+                    print(strSuccess as Any)
+                    
+                    if strSuccess == String("success") {
                         
-                        switch response.result {
-                        case let .success(value):
+                        print("yes")
+                        
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
                             
-                            let JSON = value as! NSDictionary
-                            print(JSON as Any)
+                            /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDoctorsVC") as? HPDoctorsVC
+                             push!.strMyProfileIs = "FromHospitalProfileToPatient"
+                             self.navigationController?.pushViewController(push!, animated: true)*/
                             
-                            var strSuccess : String!
-                            strSuccess = (JSON["status"]as Any as? String)?.lowercased()
-                            print(strSuccess as Any)
-                            
-                            if strSuccess == String("success") {
-                                
-                                print("yes")
-                                
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var strSuccess2 : String!
-                                strSuccess2 = JSON["msg"]as Any as? String
-                                
-                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                
-                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { action  in
-                                    
-                                    /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDoctorsVC") as? HPDoctorsVC
-                                    push!.strMyProfileIs = "FromHospitalProfileToPatient"
-                                    self.navigationController?.pushViewController(push!, animated: true)*/
-                                    
-                                }))
-                                
-                                self.present(alert, animated: true)
-                                
-                                
-                                
-                                
-                            } else {
-                                print("no")
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var strSuccess2 : String!
-                                strSuccess2 = JSON["msg"]as Any as? String
-                                
-                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                
-                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                                
-                                self.present(alert, animated: true)
-                                
-                                
-                                
-                                
-                            }
-                            
-                        case let .failure(error):
-                            print(error)
-                            ERProgressHud.sharedInstance.hide()
-                            
-                        // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
-                        }
-                       }
+                        }))
+                        
+                        self.present(alert, animated: true)
+                        
+                        
+                        
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                        
+                        
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
         }
     }
     
@@ -373,15 +482,15 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                                 // UserDefaults.standard.set(myString, forKey: "keySetToBackOrMenu")
                                 
                                 for controller in self.navigationController!.viewControllers as Array {
-                                if controller.isKind(of: HPDoctorsVC.self) {
-                                    self.navigationController!.popToViewController(controller, animated: true)
+                                    if controller.isKind(of: HPDoctorsVC.self) {
+                                        self.navigationController!.popToViewController(controller, animated: true)
                                         break
                                     }
                                 }
                                 
                                 /*let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HPDoctorsVC") as? HPDoctorsVC
-                                push!.strMyProfileIs = "FromHospitalProfileToPatient"
-                                self.navigationController?.pushViewController(push!, animated: true)*/
+                                 push!.strMyProfileIs = "FromHospitalProfileToPatient"
+                                 self.navigationController?.pushViewController(push!, animated: true)*/
                                 
                             }
                             
@@ -418,25 +527,112 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
     @objc func medical_history_for_pharmacy_wb() {
         // self.arrListOfAppoitmentList.removeAllObjects()
         
+        let push = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MedicalHistoryVC") as? MedicalHistoryVC
+        
+        push!.getPatientRegistrationDetails = self.getPatientRegistrationDetails
+        
+        self.navigationController?.pushViewController(push!, animated: true)
+        
+        /*ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+         
+         
+         self.view.endEditing(true)
+         
+         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+         let x : Int = (person["userId"] as! Int)
+         let myString = String(x)
+         
+         let x2 : Int = (self.getPatientRegistrationDetails["userId"] as! Int)
+         let myString2 = String(x2)
+         
+         
+         
+         let params = medical_history_for_pharmacy(action: "medicalhistory",
+         userId: String(myString2),
+         doctorId: "",
+         hospitalId: String(myString),
+         type: String("Pharmacy"))
+         
+         print(params as Any)
+         
+         AF.request(APPLICATION_BASE_URL,
+         method: .post,
+         parameters: params,
+         encoder: JSONParameterEncoder.default).responseJSON { response in
+         // debugPrint(response.result)
+         
+         switch response.result {
+         case let .success(value):
+         
+         let JSON = value as! NSDictionary
+         print(JSON as Any)
+         
+         var strSuccess : String!
+         strSuccess = JSON["status"]as Any as? String
+         
+         // var strSuccess2 : String!
+         // strSuccess2 = JSON["msg"]as Any as? String
+         
+         if strSuccess == String("success") {
+         print("yes")
+         
+         ERProgressHud.sharedInstance.hide()
+         
+         var dict: Dictionary<AnyHashable, Any>
+         dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+         print(dict as Any)
+         
+         //  dict = self.dictSavePatientDetails
+         self.dictSavePatientDetails = dict as NSDictionary
+         self.isMedicalHistoryCreated = "1"
+         self.fetchMedicalHistory(getDictValue: dict as NSDictionary)
+         
+         
+         } else {
+         
+         print("no")
+         ERProgressHud.sharedInstance.hide()
+         self.isMedicalHistoryCreated = "2"
+         
+         /*var strSuccess2 : String!
+          strSuccess2 = JSON["msg"]as Any as? String
+          
+          let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+          
+          alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+          
+          self.present(alert, animated: true)*/
+         
+         }
+         
+         case let .failure(error):
+         print(error)
+         ERProgressHud.sharedInstance.hide()
+         
+         // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+         }
+         }
+         
+         }*/
+    }
+    
+    @objc func new_medical_history_report_get_patient() {
+        // self.arrListOfAppoitmentList.removeAllObjects()
+        
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
         
         self.view.endEditing(true)
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            print(person as Any)
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
-            let x2 : Int = (self.getPatientRegistrationDetails["userId"] as! Int)
-            let myString2 = String(x2)
             
-            
-            
-            let params = medical_history_for_pharmacy(action: "medicalhistory",
-                                        userId: String(myString2),
-                                        doctorId: "",
-                                        hospitalId: String(myString),
-                                                      type: String("Pharmacy"))
+            let params = get_medical_history_all_questions(action: "getanswer",
+                                                           userId: String(myString), // patient id
+                                                           login_id: String(myString))  // hospital id
             
             print(params as Any)
             
@@ -461,16 +657,71 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                     if strSuccess == String("success") {
                         print("yes")
                         
-                        ERProgressHud.sharedInstance.hide()
                         
-                        var dict: Dictionary<AnyHashable, Any>
-                        dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                        print(dict as Any)
                         
-                       //  dict = self.dictSavePatientDetails
-                        self.dictSavePatientDetails = dict as NSDictionary
-                        self.isMedicalHistoryCreated = "1"
-                        self.fetchMedicalHistory(getDictValue: dict as NSDictionary)
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["permission"]as Any as? String
+                        
+                        
+                            print(self.getPatientRegistrationDetails as Any)
+                            
+                            self.btn_submit.isHidden = false
+                            self.btn_submit.isUserInteractionEnabled = false
+                            
+                        self.btn_submit.setTitle("My Medical Report", for: .normal)
+                            
+                            
+                            ERProgressHud.sharedInstance.hide()
+                            print("======== > medical history found < ==========")
+                            
+                            var ar : NSArray!
+                            ar = (JSON["data"] as! Array<Any>) as NSArray
+                            // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+                            
+                            if ar.count == 0 {
+                                
+                                let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No medical history found"), style: .alert)
+                                
+                                alert.addImage(UIImage.gif(name: "gif_alert"))
+                                
+                                let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                                    
+                                    // SPConfetti.stopAnimating()
+                                    
+                                    self.navigationController?.popViewController(animated: true)
+                                }
+                                alert.addButtons([cancel])
+                                
+                                self.present(alert, animated: true)
+                                
+                            } else {
+                                
+                                for indexx in 0..<ar.count {
+                                    
+                                    let item = ar[indexx] as? [String:Any]
+                                    
+                                    let x : Int = (item!["questionId"] as! Int)
+                                    let myString = String(x)
+                                    
+                                    let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                                       "answer":(item!["answer"] as! String),
+                                                       "questionId":String(myString)]
+                                    
+                                    
+                                    self.arr_list_of_medical_questions.add(custom_dict)
+                                }
+                                
+                                // print(self.arr_list_of_medical_questions as Any)
+                                
+                                self.tablViw.dataSource = self
+                                self.tablViw.delegate = self
+                                self.tablViw.reloadData()
+                                
+                            
+                            
+                        }
+                        
                         
                         
                     } else {
@@ -501,6 +752,748 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
         }
     }
     
+    @objc func new_medical_history_report_get() {
+        // self.arrListOfAppoitmentList.removeAllObjects()
+        
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        
+        self.view.endEditing(true)
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            print(person as Any)
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
+            let x2 : Int = (self.getPatientRegistrationDetails["userId"] as! Int)
+            let myString2 = String(x2)
+            
+            
+            
+            let params = get_medical_history_all_questions(action: "getanswer",
+                                                           userId: String(myString2), // patient id
+                                                           login_id: String(myString))  // hospital id
+            
+            print(params as Any)
+            
+            AF.request(APPLICATION_BASE_URL,
+                       method: .post,
+                       parameters: params,
+                       encoder: JSONParameterEncoder.default).responseJSON { response in
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = JSON["status"]as Any as? String
+                    
+                    // var strSuccess2 : String!
+                    // strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == String("success") {
+                        print("yes")
+                        
+                        if (person["role"] as! String) == "Hospital" { // HOSPITAL
+                            
+                            self.manage_Data_for_hospital(get_json_as_dict: JSON)
+                            
+                        } else if (person["role"] as! String) == "Doctor" { // DOCTOR
+                            
+                            self.manage_Data_for_doctor(get_json_as_dict: JSON,
+                                                        str_patient_id: String(myString2),
+                                                        str_login_id: String(myString))
+                            
+                            
+                        } else if (person["role"] as! String) == "Lab" { // LAB
+                            
+                            self.manage_Data_for_lab(get_json_as_dict: JSON,
+                                                     str_patient_id: String(myString2),
+                                                     str_login_id: String(myString))
+                            
+                            
+                            
+                        } else if (person["role"] as! String) == "Pharmacy" { // LAB
+                            
+                            self.manage_Data_for_pharmacy(get_json_as_dict: JSON,
+                                                          str_patient_id: String(myString2),
+                                                          str_login_id: String(myString))
+                            
+                        } else if (person["role"] as! String) == "Patient" { // PATIENT
+                            
+                            
+                            
+                        } else {
+                            
+                            
+                            var strSuccess2 : String!
+                            strSuccess2 = JSON["permission"]as Any as? String
+                            
+                            if strSuccess2 == "Decline" {
+                                
+                                ERProgressHud.sharedInstance.hide()
+                                
+                                self.lblNavigationBar.text = "CHECK MEDICAL HISTORY"
+                                
+                                let alert = NewYorkAlertController(title: "Permission", message: String("You don't have permission to access Patient's Medical History."), style: .alert)
+                                
+                                alert.addImage(UIImage(named: "medical_permission"))
+                                
+                                let send_permission = NewYorkButton(title: "Ask Permission", style: .default) {
+                                    _ in
+                                    
+                                    self.request_Access_for_medical_history(str_user_id: String(myString2),
+                                                                            str_login_id: String(myString))
+                                    
+                                }
+                                
+                                let cancel = NewYorkButton(title: "Dismiss", style: .cancel) {
+                                    _ in
+                                    
+                                    self.backClickMethod()
+                                }
+                                
+                                
+                                alert.addButtons([send_permission,cancel])
+                                
+                                self.present(alert, animated: true)
+                                
+                            } else {
+                                // accept
+                                
+                                print(self.getPatientRegistrationDetails as Any)
+                                
+                                self.btn_submit.isHidden = false
+                                self.btn_submit.isUserInteractionEnabled = false
+                                
+                                if (person["role"] as! String) == "Pharmacy" {
+                                    
+                                    self.btn_submit.setTitle((self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+                                    
+                                } else {
+                                    
+                                    self.btn_submit.setTitle((self.getPatientRegistrationDetails["PatientfullName"] as! String)+" "+(self.getPatientRegistrationDetails["PatientLastName"] as! String)+"'s medical report.", for: .normal)
+                                    
+                                }
+                                
+                                
+                                ERProgressHud.sharedInstance.hide()
+                                print("======== > medical history found < ==========")
+                                
+                                var ar : NSArray!
+                                ar = (JSON["data"] as! Array<Any>) as NSArray
+                                // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+                                
+                                if ar.count == 0 {
+                                    
+                                    let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No medical history found"), style: .alert)
+                                    
+                                    alert.addImage(UIImage.gif(name: "gif_alert"))
+                                    
+                                    let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                                        
+                                        // SPConfetti.stopAnimating()
+                                        
+                                        self.navigationController?.popViewController(animated: true)
+                                    }
+                                    alert.addButtons([cancel])
+                                    
+                                    self.present(alert, animated: true)
+                                    
+                                } else {
+                                    
+                                    for indexx in 0..<ar.count {
+                                        
+                                        let item = ar[indexx] as? [String:Any]
+                                        
+                                        let x : Int = (item!["questionId"] as! Int)
+                                        let myString = String(x)
+                                        
+                                        let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                                           "answer":(item!["answer"] as! String),
+                                                           "questionId":String(myString)]
+                                        
+                                        
+                                        self.arr_list_of_medical_questions.add(custom_dict)
+                                    }
+                                    
+                                    // print(self.arr_list_of_medical_questions as Any)
+                                    
+                                    self.tablViw.dataSource = self
+                                    self.tablViw.delegate = self
+                                    self.tablViw.reloadData()
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    } else {
+                        
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        self.isMedicalHistoryCreated = "2"
+                        
+                        /*var strSuccess2 : String!
+                         strSuccess2 = JSON["msg"]as Any as? String
+                         
+                         let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                         
+                         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                         
+                         self.present(alert, animated: true)*/
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
+            
+        }
+    }
+    
+    // MARK: - MANAGE ( HOSPITAL ) -
+    @objc func manage_Data_for_hospital(get_json_as_dict:NSDictionary) {
+        
+        var ar : NSArray!
+        ar = (get_json_as_dict["data"] as! Array<Any>) as NSArray
+        
+        if ar.count == 0 {
+            
+            print("======== > medical history NOT found < ==========")
+            
+            self.get_all_medical_history_questions_wb()
+            
+        } else {
+            
+            ERProgressHud.sharedInstance.hide()
+            print("======== > medical history found < ==========")
+            
+            var ar : NSArray!
+            ar = (get_json_as_dict["data"] as! Array<Any>) as NSArray
+            // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+            
+            for indexx in 0..<ar.count {
+                
+                let item = ar[indexx] as? [String:Any]
+                
+                let x : Int = (item!["questionId"] as! Int)
+                let myString = String(x)
+                
+                let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                   "answer":(item!["answer"] as! String),
+                                   "questionId":String(myString)]
+                
+                
+                self.arr_list_of_medical_questions.add(custom_dict)
+            }
+            
+            self.tablViw.dataSource = self
+            self.tablViw.delegate = self
+            self.tablViw.reloadData()
+            
+        }
+        
+    }
+    
+    // MARK: - MANAGE ( DOCTOR ) -
+    @objc func manage_Data_for_doctor(get_json_as_dict:NSDictionary,str_patient_id:String,str_login_id:String) {
+        
+        var strSuccess2 : String!
+        strSuccess2 = get_json_as_dict["permission"]as Any as? String
+        
+        if strSuccess2 == "Decline" {
+            
+            ERProgressHud.sharedInstance.hide()
+            
+            self.lblNavigationBar.text = "CHECK MEDICAL HISTORY"
+            
+            let alert = NewYorkAlertController(title: "Permission", message: String("You don't have permission to access Patient's Medical History."), style: .alert)
+            
+            alert.addImage(UIImage(named: "medical_permission"))
+            
+            let send_permission = NewYorkButton(title: "Ask Permission", style: .default) {
+                _ in
+                
+                self.request_Access_for_medical_history(str_user_id: String(str_patient_id),
+                                                        str_login_id: String(str_login_id))
+                
+            }
+            
+            let cancel = NewYorkButton(title: "Dismiss", style: .cancel) {
+                _ in
+                
+                self.backClickMethod()
+            }
+            
+            
+            alert.addButtons([send_permission,cancel])
+            
+            self.present(alert, animated: true)
+            
+        } else {
+            // accept
+            
+            // print(self.getPatientRegistrationDetails as Any)
+            
+            self.btn_submit.isHidden = false
+            self.btn_submit.isUserInteractionEnabled = false
+            
+            /*if (person["role"] as! String) == "Lab" ||
+             (person["role"] as! String) == "Pharmacy" {
+             
+             self.btn_submit.setTitle((self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+             
+             } else {
+             */
+            
+            self.btn_submit.setTitle((self.getPatientRegistrationDetails["PatientfullName"] as! String)+" "+(self.getPatientRegistrationDetails["PatientLastName"] as! String)+"'s medical report.", for: .normal)
+            
+            // }
+            
+            
+            ERProgressHud.sharedInstance.hide()
+            print("======== > medical history found < ==========")
+            
+            var ar : NSArray!
+            ar = (get_json_as_dict["data"] as! Array<Any>) as NSArray
+            // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+            
+            if ar.count == 0 {
+                
+                self.get_all_medical_history_questions_wb()
+                
+                /*let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No medical history found"), style: .alert)
+                 
+                 alert.addImage(UIImage.gif(name: "gif_alert"))
+                 
+                 let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                 
+                 // SPConfetti.stopAnimating()
+                 
+                 self.navigationController?.popViewController(animated: true)
+                 }
+                 alert.addButtons([cancel])
+                 
+                 self.present(alert, animated: true)*/
+                
+            } else {
+                
+                for indexx in 0..<ar.count {
+                    
+                    let item = ar[indexx] as? [String:Any]
+                    
+                    let x : Int = (item!["questionId"] as! Int)
+                    let myString = String(x)
+                    
+                    let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                       "answer":(item!["answer"] as! String),
+                                       "questionId":String(myString)]
+                    
+                    
+                    self.arr_list_of_medical_questions.add(custom_dict)
+                }
+                
+                // print(self.arr_list_of_medical_questions as Any)
+                
+                self.tablViw.dataSource = self
+                self.tablViw.delegate = self
+                self.tablViw.reloadData()
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
+    // MARK: - MANAGE ( LABS ) -
+    @objc func manage_Data_for_lab(get_json_as_dict:NSDictionary,str_patient_id:String,str_login_id:String) {
+        
+        
+        var strSuccess2 : String!
+        strSuccess2 = get_json_as_dict["permission"]as Any as? String
+        
+        if strSuccess2 == "Decline" {
+            
+            ERProgressHud.sharedInstance.hide()
+            
+            self.lblNavigationBar.text = "CHECK MEDICAL HISTORY"
+            
+            let alert = NewYorkAlertController(title: "Permission", message: String("You don't have permission to access Patient's Medical History."), style: .alert)
+            
+            alert.addImage(UIImage(named: "medical_permission"))
+            
+            let send_permission = NewYorkButton(title: "Ask Permission", style: .default) {
+                _ in
+                
+                self.request_Access_for_medical_history(str_user_id: String(str_patient_id),
+                                                        str_login_id: String(str_login_id))
+                
+            }
+            
+            let cancel = NewYorkButton(title: "Dismiss", style: .cancel) {
+                _ in
+                
+                self.backClickMethod()
+            }
+            
+            
+            alert.addButtons([send_permission,cancel])
+            
+            self.present(alert, animated: true)
+            
+        } else {
+            // accept
+            
+            // print(self.getPatientRegistrationDetails as Any)
+            
+            if self.str_edit_patient == "no_edit" {
+                
+                self.btn_submit.isUserInteractionEnabled = false
+                self.btn_submit.setTitle((self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+                
+            } else {
+                
+                self.btn_submit.isUserInteractionEnabled = true
+                self.btn_submit.setTitle("Edit "+(self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+                self.btn_submit.addTarget(self, action: #selector(add_answer_wb), for: .touchUpInside)
+                
+            }
+            
+            
+            
+            ERProgressHud.sharedInstance.hide()
+            print("======== > medical history found < ==========")
+            
+            var ar : NSArray!
+            ar = (get_json_as_dict["data"] as! Array<Any>) as NSArray
+            // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+            
+            if ar.count == 0 {
+                
+                self.get_all_medical_history_questions_wb()
+                
+                /*let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No medical history found"), style: .alert)
+                 
+                 alert.addImage(UIImage.gif(name: "gif_alert"))
+                 
+                 let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                 
+                 // SPConfetti.stopAnimating()
+                 
+                 self.navigationController?.popViewController(animated: true)
+                 }
+                 alert.addButtons([cancel])
+                 
+                 self.present(alert, animated: true)*/
+                
+            } else {
+                
+                for indexx in 0..<ar.count {
+                    
+                    let item = ar[indexx] as? [String:Any]
+                    
+                    let x : Int = (item!["questionId"] as! Int)
+                    let myString = String(x)
+                    
+                    let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                       "answer":(item!["answer"] as! String),
+                                       "questionId":String(myString)]
+                    
+                    
+                    self.arr_list_of_medical_questions.add(custom_dict)
+                }
+                
+                // print(self.arr_list_of_medical_questions as Any)
+                
+                self.tablViw.dataSource = self
+                self.tablViw.delegate = self
+                self.tablViw.reloadData()
+                
+            }
+            
+        }
+        
+    }
+    
+    // MARK: - MANAGE ( LABS ) -
+    @objc func manage_Data_for_pharmacy(get_json_as_dict:NSDictionary,
+                                        str_patient_id:String,
+                                        str_login_id:String) {
+        
+        
+        var strSuccess2 : String!
+        strSuccess2 = get_json_as_dict["permission"]as Any as? String
+        
+        if strSuccess2 == "Decline" {
+            
+            ERProgressHud.sharedInstance.hide()
+            
+            self.lblNavigationBar.text = "CHECK MEDICAL HISTORY"
+            
+            let alert = NewYorkAlertController(title: "Permission", message: String("You don't have permission to access Patient's Medical History."), style: .alert)
+            
+            alert.addImage(UIImage(named: "medical_permission"))
+            
+            let send_permission = NewYorkButton(title: "Ask Permission", style: .default) {
+                _ in
+                
+                self.request_Access_for_medical_history(str_user_id: String(str_patient_id),
+                                                        str_login_id: String(str_login_id))
+                
+            }
+            
+            let cancel = NewYorkButton(title: "Dismiss", style: .cancel) {
+                _ in
+                
+                self.backClickMethod()
+            }
+            
+            
+            alert.addButtons([send_permission,cancel])
+            
+            self.present(alert, animated: true)
+            
+        } else {
+            // accept
+            
+            // print(self.getPatientRegistrationDetails as Any)
+            
+            if self.str_edit_patient == "no_edit" {
+                
+                self.btn_submit.isUserInteractionEnabled = false
+                self.btn_submit.setTitle((self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+                
+            } else {
+                
+                self.btn_submit.isUserInteractionEnabled = true
+                self.btn_submit.setTitle("Edit "+(self.getPatientRegistrationDetails["fullName"] as! String)+"'s medical report.", for: .normal)
+                self.btn_submit.addTarget(self, action: #selector(add_answer_wb), for: .touchUpInside)
+                
+            }
+            
+            
+            
+            ERProgressHud.sharedInstance.hide()
+            print("======== > medical history found < ==========")
+            
+            var ar : NSArray!
+            ar = (get_json_as_dict["data"] as! Array<Any>) as NSArray
+            // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+            
+            if ar.count == 0 {
+                
+                self.get_all_medical_history_questions_wb()
+                
+                /*let alert = NewYorkAlertController(title: String("Alert").uppercased(), message: String("No medical history found"), style: .alert)
+                 
+                 alert.addImage(UIImage.gif(name: "gif_alert"))
+                 
+                 let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                 
+                 // SPConfetti.stopAnimating()
+                 
+                 self.navigationController?.popViewController(animated: true)
+                 }
+                 alert.addButtons([cancel])
+                 
+                 self.present(alert, animated: true)*/
+                
+            } else {
+                
+                for indexx in 0..<ar.count {
+                    
+                    let item = ar[indexx] as? [String:Any]
+                    
+                    let x : Int = (item!["questionId"] as! Int)
+                    let myString = String(x)
+                    
+                    let custom_dict = ["questionName":(item!["questionName"] as! String),
+                                       "answer":(item!["answer"] as! String),
+                                       "questionId":String(myString)]
+                    
+                    
+                    self.arr_list_of_medical_questions.add(custom_dict)
+                }
+                
+                // print(self.arr_list_of_medical_questions as Any)
+                
+                self.tablViw.dataSource = self
+                self.tablViw.delegate = self
+                self.tablViw.reloadData()
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
+    @objc func request_Access_for_medical_history(str_user_id:String,str_login_id:String) {
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        self.view.endEditing(true)
+        
+        let params = request_access_medical_history(action: "requesttogetaccess",
+                                                    userId: String(str_user_id),
+                                                    login_id: String(str_login_id))
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = JSON["status"]as Any as? String
+                
+                // var strSuccess2 : String!
+                // strSuccess2 = JSON["msg"]as Any as? String
+                
+                if strSuccess == String("success") {
+                    print("yes")
+                    
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    let alert = NewYorkAlertController(title: "Success", message: String(strSuccess2), style: .alert)
+                    
+                    alert.addImage(UIImage.gif(name: "success3"))
+                    
+                    let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                    alert.addButtons([cancel])
+                    
+                    self.present(alert, animated: true)
+                    
+                } else {
+                    
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    
+                }
+                
+            case let .failure(error):
+                print(error)
+                ERProgressHud.sharedInstance.hide()
+                
+                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+            }
+        }
+        
+        
+        
+        
+    }
+    
+    @objc func get_all_medical_history_questions_wb() {
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        self.view.endEditing(true)
+        
+        let params = list_of_all_medical_history_questions(action: "questionlist")
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = JSON["status"]as Any as? String
+                
+                // var strSuccess2 : String!
+                // strSuccess2 = JSON["msg"]as Any as? String
+                
+                if strSuccess == String("success") {
+                    print("yes")
+                    
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    /*var dict: Dictionary<AnyHashable, Any>
+                     dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                     print(dict as Any)*/
+                    
+                    
+                    var ar : NSArray!
+                    ar = (JSON["data"] as! Array<Any>) as NSArray
+                    // self.arr_list_of_medical_questions.addObjects(from: ar as! [Any])
+                    
+                    
+                    for indexx in 0..<ar.count {
+                        
+                        let item = ar[indexx] as? [String:Any]
+                        
+                        let x : Int = (item!["id"] as! Int)
+                        let myString = String(x)
+                        
+                        let custom_dict = ["questionName":(item!["name"] as! String),
+                                           "answer":"",
+                                           "questionId":String(myString)]
+                        
+                        
+                        self.arr_list_of_medical_questions.add(custom_dict)
+                    }
+                    
+                    // print(self.arr_list_of_medical_questions as Any)
+                    
+                    self.tablViw.dataSource = self
+                    self.tablViw.delegate = self
+                    self.tablViw.reloadData()
+                    
+                } else {
+                    
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    
+                }
+                
+            case let .failure(error):
+                print(error)
+                ERProgressHud.sharedInstance.hide()
+                
+                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+            }
+        }
+        
+        
+        
+        
+    }
+    
+    
     @objc func checkPatientMedicalHistoryFromHispitalSide() {
         // self.arrListOfAppoitmentList.removeAllObjects()
         
@@ -510,18 +1503,37 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
         self.view.endEditing(true)
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            print(person as Any)
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
             let x2 : Int = (self.getPatientRegistrationDetails["userId"] as! Int)
             let myString2 = String(x2)
             
+            /*
+             [action] => medicalhistory
+             [userId] => 362
+             [doctorId] =>
+             [hospitalId] => 324
+             [login_id] => 324
+             [type] => Hospital
+             */
             
+            /*
+             New_Hospital_Medical_History
+             */
             
-            let params = MedicalHistory(action: "medicalhistory",
-                                        userId: String(myString2),
-                                        doctorId: "",
-                                        hospitalId: String(myString))
+            /*let params = MedicalHistory(action: "medicalhistory",
+             userId: String(myString2),
+             doctorId: "",
+             hospitalId: String(myString))*/
+            
+            let params = New_Hospital_Medical_History(action: "medicalhistory",
+                                                      userId: String(myString2),
+                                                      doctorId: "",
+                                                      hospitalId: String(myString),
+                                                      login_id: String(myString),
+                                                      type: (person["role"] as! String))
             
             print(params as Any)
             
@@ -552,7 +1564,7 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                         dict = JSON["data"] as! Dictionary<AnyHashable, Any>
                         print(dict as Any)
                         
-                       //  dict = self.dictSavePatientDetails
+                        //  dict = self.dictSavePatientDetails
                         self.dictSavePatientDetails = dict as NSDictionary
                         self.isMedicalHistoryCreated = "1"
                         self.fetchMedicalHistory(getDictValue: dict as NSDictionary)
@@ -600,10 +1612,21 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
-            let params = MedicalHistory(action: "medicalhistory",
-                                        userId: String(myString),
-                                        doctorId: "",
-                                        hospitalId: "")
+            /*
+             New_Hospital_Medical_History(action: "medicalhistory",
+             userId: String(myString2),
+             doctorId: "",
+             hospitalId: String(myString),
+             login_id: String(myString),
+             type: (person["role"] as! String))
+             */
+            
+            let params = New_Hospital_Medical_History(action: "medicalhistory",
+                                                      userId: String(myString),
+                                                      doctorId: "",
+                                                      hospitalId: "",
+                                                      login_id: String(myString),
+                                                      type: (person["role"] as! String))
             
             print(params as Any)
             
@@ -611,57 +1634,146 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                        method: .post,
                        parameters: params,
                        encoder: JSONParameterEncoder.default).responseJSON { response in
-                        // debugPrint(response.result)
+                // debugPrint(response.result)
+                
+                switch response.result {
+                case let .success(value):
+                    
+                    let JSON = value as! NSDictionary
+                    print(JSON as Any)
+                    
+                    var strSuccess : String!
+                    strSuccess = JSON["status"]as Any as? String
+                    
+                    // var strSuccess2 : String!
+                    // strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == String("success") {
+                        print("yes")
                         
-                        switch response.result {
-                        case let .success(value):
-                            
-                            let JSON = value as! NSDictionary
-                            print(JSON as Any)
-                            
-                            var strSuccess : String!
-                            strSuccess = JSON["status"]as Any as? String
-                            
-                            // var strSuccess2 : String!
-                            // strSuccess2 = JSON["msg"]as Any as? String
-                            
-                            if strSuccess == String("success") {
-                                print("yes")
-                                
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var dict: Dictionary<AnyHashable, Any>
-                                dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                
-                                
-                                self.fetchMedicalHistory(getDictValue: dict as NSDictionary)
-                                 
-                            } else {
-                                print("no")
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                var strSuccess2 : String!
-                                strSuccess2 = JSON["msg"]as Any as? String
-                                
-                                let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
-                                
-                                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                                
-                                self.present(alert, animated: true)
-                                
-                            }
-                            
-                        case let .failure(error):
-                            print(error)
-                            ERProgressHud.sharedInstance.hide()
-                            
-                        // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
-                        }
-                       }
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var dict: Dictionary<AnyHashable, Any>
+                        dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                        
+                        
+                        self.fetchMedicalHistory(getDictValue: dict as NSDictionary)
+                        
+                    } else {
+                        print("no")
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        var strSuccess2 : String!
+                        strSuccess2 = JSON["msg"]as Any as? String
+                        
+                        let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        
+                        self.present(alert, animated: true)
+                        
+                    }
+                    
+                case let .failure(error):
+                    print(error)
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+                }
+            }
             
         }
     }
     
+    
+    @objc func add_answer_wb() {
+        
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        self.view.endEditing(true)
+        
+        // if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+        // let x : Int = (person["userId"] as! Int)
+        // let myString = String(x)
+        
+        let x2 : Int = self.getPatientRegistrationDetails["userId"] as! Int
+        let myString2 = String(x2)
+        
+        // print(self.arr_list_of_medical_questions as Any)
+        
+        // convert array into JSONSerialization
+        let paramsArray = self.arr_list_of_medical_questions
+        let paramsJSON = JSON(paramsArray)
+        let paramsString = paramsJSON.rawString(String.Encoding.utf8, options: JSONSerialization.WritingOptions.prettyPrinted)!
+        
+        let params = add_answer_to_medical_history(action: "addanswer",
+                                                   userId: String(myString2), // patient id
+                                                   answerJson: String(paramsString))
+        
+        print(params as Any)
+        
+        AF.request(APPLICATION_BASE_URL,
+                   method: .post,
+                   parameters: params,
+                   encoder: JSONParameterEncoder.default).responseJSON { response in
+            // debugPrint(response.result)
+            
+            switch response.result {
+            case let .success(value):
+                
+                let JSON = value as! NSDictionary
+                print(JSON as Any)
+                
+                var strSuccess : String!
+                strSuccess = JSON["status"]as Any as? String
+                
+                // var strSuccess2 : String!
+                // strSuccess2 = JSON["msg"]as Any as? String
+                
+                if strSuccess == String("success") {
+                    print("yes")
+                    
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    let alert = NewYorkAlertController(title: "Success", message: String(strSuccess2), style: .alert)
+                    
+                    alert.addImage(UIImage.gif(name: "success3"))
+                    
+                    let cancel = NewYorkButton(title: "Ok", style: .cancel) { _ in
+                        // self.navigationController?.popViewController(animated: true)
+                    }
+                    alert.addButtons([cancel])
+                    
+                    self.present(alert, animated: true)
+                    
+                } else {
+                    print("no")
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    var strSuccess2 : String!
+                    strSuccess2 = JSON["msg"]as Any as? String
+                    
+                    let alert = UIAlertController(title: String(strSuccess).uppercased(), message: String(strSuccess2), preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    
+                    self.present(alert, animated: true)
+                    
+                }
+                
+            case let .failure(error):
+                print(error)
+                ERProgressHud.sharedInstance.hide()
+                
+                // Utils.showAlert(alerttitle: SERVER_ISSUE_TITLE, alertmessage: SERVER_ISSUE_MESSAGE, ButtonTitle: "Ok", viewController: self)
+            }
+        }
+        
+        // }
+    }
     
     @objc func fetchMedicalHistory(getDictValue:NSDictionary) {
         
@@ -954,8 +2066,8 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                             cell.scrollView.addSubview(imageView)
                             
                             /*let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(PatientPrescriptionDetails.cellTappedMethod2(_:)))
-                            imageView.isUserInteractionEnabled = true
-                            imageView.addGestureRecognizer(tapGestureRecognizer1)*/
+                             imageView.isUserInteractionEnabled = true
+                             imageView.addGestureRecognizer(tapGestureRecognizer1)*/
                             
                         }
                         
@@ -991,8 +2103,8 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                             cell.scrollView.addSubview(imageView)
                             
                             /*let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(PatientPrescriptionDetails.cellTappedMethod2(_:)))
-                            imageView.isUserInteractionEnabled = true
-                            imageView.addGestureRecognizer(tapGestureRecognizer1)*/
+                             imageView.isUserInteractionEnabled = true
+                             imageView.addGestureRecognizer(tapGestureRecognizer1)*/
                             
                         }
                         
@@ -1046,7 +2158,7 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                 cell.imgProfileImage.isHidden = true
                 cell.imgProfileImage.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
                 cell.imgProfileImage.sd_setImage(with: URL(string: (getDictValue["medical_history_image"] as! String)), placeholderImage: UIImage(named: "logo"))
-                 
+                
                 self.saveMedicalPatientDetails = getDictValue
                 self.saveMedicalImage = (getDictValue["medical_history_image"] as! String)
                 
@@ -1091,7 +2203,7 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                 if (getDictValue["have_allergies"] as! String) == "" {
                     cell.btnNOForMedicationAllergies.setImage(UIImage(named: "check5"), for: .normal)
                 } else {
-                                
+                    
                     if (getDictValue["have_allergies"] as! String) == "Yes" {
                         
                         cell.btnYesForMedicationAllergies.setImage(UIImage(named: "check5"), for: .normal)
@@ -1106,7 +2218,7 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                 if (getDictValue["using_alcohol"] as! String) == "" {
                     cell.btnNOForHistoryDrug.setImage(UIImage(named: "check5"), for: .normal)
                 } else {
-                                
+                    
                     if (getDictValue["using_alcohol"] as! String) == "Yes" {
                         
                         cell.btnYesForHistoryDrug.setImage(UIImage(named: "check5"), for: .normal)
@@ -1209,8 +2321,8 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
                         cell.scrollView.addSubview(imageView)
                         
                         /*let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(PatientPrescriptionDetails.cellTappedMethod2(_:)))
-                        imageView.isUserInteractionEnabled = true
-                        imageView.addGestureRecognizer(tapGestureRecognizer1)*/
+                         imageView.isUserInteractionEnabled = true
+                         imageView.addGestureRecognizer(tapGestureRecognizer1)*/
                         
                     }
                     
@@ -1232,19 +2344,20 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
             
         }
         
-      
+        
         
         
     }
+    
     
     
     @objc func leftButtonTapped() {
         let indexPath = IndexPath.init(row: 0, section: 0)
         let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
         
-         if cell.scrollView.contentOffset.x > 0 {
-             cell.scrollView.contentOffset.x -=  cell.scrollView.bounds.width
-         }
+        if cell.scrollView.contentOffset.x > 0 {
+            cell.scrollView.contentOffset.x -=  cell.scrollView.bounds.width
+        }
     }
     
     @objc func rightButtonTapped() {
@@ -1256,78 +2369,171 @@ class MedicalHistoryVC: UIViewController , UIScrollViewDelegate {
         }
         
     }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        // print("========== > end editing")
+        
+        print("TextField did end editing method text ==>\(textField.text!)")
+        print("TextField did end editing method tag == >\(textField.tag)")
+        
+        /*let  text_field :UITextField = textField
+         
+         // print(self.arr_list_of_medical_questions as Any)
+         
+         self.arr_list_of_medical_questions.removeObject(at: text_field.tag)
+         
+         let item = self.arr_list_of_medical_questions[text_field.tag] as? [String:Any]
+         // print(item as Any)
+         
+         let custom_dict = ["questionName"   : (item!["questionName"] as! String),
+         "answer"         : String(text_field.text!),
+         "questionId"     : (item!["questionId"] as! String)]
+         
+         
+         self.arr_list_of_medical_questions.insert(custom_dict, at: text_field.tag)
+         
+         print(self.arr_list_of_medical_questions as Any)
+         
+         self.tablViw.reloadData()*/
         
         
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        print("========== > should begin begin")
+        
+        return true
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        // print("TextField did end editing method text ==>\(textView.text!)")
+        // print("TextField did end editing method tag == >\(textView.tag)")
+        
+        let  text_field :UITextView = textView
+        
+        let item = self.arr_list_of_medical_questions[text_field.tag] as? [String:Any]
+        // print(item as Any)
+        
+        let custom_dict = ["questionName"   : (item!["questionName"] as! String),
+                           "answer"         : String(text_field.text!),
+                           "questionId"     : (item!["questionId"] as! String)]
+        
+        self.arr_list_of_medical_questions.removeObject(at: text_field.tag)
+        self.arr_list_of_medical_questions.insert(custom_dict, at: text_field.tag)
+        
+        // print(self.arr_list_of_medical_questions as Any)
+        
+        // print("TextField did end editing method text ==>\(textView.text!)")
+        // print("TextField did end editing method tag == >\(textView.tag)")
+        
+        // self.tablViw.reloadData()
+        
+    }
+    
+    
 }
 
-extension MedicalHistoryVC:UITableViewDataSource,UITableViewDelegate{
+extension MedicalHistoryVC:UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return self.arr_list_of_medical_questions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell:MedicalHistoryTableViewCell = tablViw.dequeueReusableCell(withIdentifier: "cell") as! MedicalHistoryTableViewCell
         cell.backgroundColor = .white
         
+        // if (indexPath.section == 0) {
+            
         let backgroundView = UIView()
         backgroundView.backgroundColor = .clear
         cell.selectedBackgroundView = backgroundView
+            
+        let item = self.arr_list_of_medical_questions[indexPath.row] as? [String:Any]
+        cell.lbl_question.text = (item!["questionName"] as! String)
+        cell.txt_view_answer.text = (item!["answer"] as! String)
         
-        cell.btnGender.addTarget(self, action: #selector(btnGenderPress), for: .touchUpInside)
+        cell.txt_view_answer.delegate = self
+        cell.txt_view_answer.isUserInteractionEnabled = true
+            
+        // cell.txt_view_answer.text = "answer..."
+        cell.txt_view_answer.textColor = .black
         
-        cell.btnYesForMedication.addTarget(self, action: #selector(btnYesPress), for: .touchUpInside)
-        cell.btnNOForMedication.addTarget(self, action: #selector(btnNOPress), for: .touchUpInside)
+        // cell.btn_for_textField.isHidden = true
+            
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            // print(person as Any)
+            
+            if (person["role"] as! String) == "Doctor" {
+                
+                cell.txt_view_answer.isSelectable = true
+                cell.txt_view_answer.isEditable = false
+                
+            } else if (person["role"] as! String) == "Patient" {
+                
+                cell.txt_view_answer.isSelectable = true
+                cell.txt_view_answer.isEditable = false
+                
+            } else if (person["role"] as! String) == "Lab" {
+                
+                if self.str_edit_patient == "no_edit" {
+                    
+                    cell.txt_view_answer.isSelectable = true
+                    cell.txt_view_answer.isEditable = false
+                    
+                } else {
+                    
+                    cell.txt_view_answer.isSelectable = true
+                    cell.txt_view_answer.isEditable = true
+                    
+                }
+                
+            } else {
+                
+                cell.txt_view_answer.isSelectable = true
+                cell.txt_view_answer.isEditable = true
+            }
+            
+        }
         
-        cell.btnYesForHistoryDrug.addTarget(self, action: #selector(btnYesHistoryDrugsPress), for: .touchUpInside)
-        cell.btnNOForHistoryDrug.addTarget(self, action: #selector(btnNOHistoryDrugsPress), for: .touchUpInside)
-        
-        cell.btnYesForMedicationAllergies.addTarget(self, action: #selector(btnYesAllergiesPress), for: .touchUpInside)
-        cell.btnNOForMedicationAllergies.addTarget(self, action: #selector(btnNOAllergiesPress), for: .touchUpInside)
-        
-        cell.btnSaveDetails.addTarget(self, action: #selector(validateBeforeAddMedicalHistory), for: .touchUpInside)
-        
-        let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(showBigImage))
-        cell.imgProfileImage.isUserInteractionEnabled = true
-        cell.imgProfileImage.addGestureRecognizer(tapGestureRecognizer1)
-        cell.imgProfileImage.isHidden = true
-        
-        cell.btnUploadReport.addTarget(self, action: #selector(uploadReportClickMethod), for: .touchUpInside)
-        
-        
-        
-        /*cell.scrollView.isPagingEnabled = true
-         for index in 0..<self.arrPrescriptionTotalImages.count {
+        cell.txt_view_answer.tag = indexPath.row
+        // cell.txt_view_answer.addTarget(self, action: #selector(textViewDidChange), for: .editingChanged)
          
-         frame.origin.x = cell.scrollView.frame.size.width * CGFloat(index)
-         frame.size = cell.scrollView.frame.size
-         
-         let item = arrPrescriptionTotalImages[index] as? [String:Any]
-         print(item as Any)
-         
-         let imageView = UIImageView()
-         
-         imageView.sd_setImage(with: URL(string: (item!["image"] as! String)), placeholderImage: UIImage(named: "1024"))
-         
-         imageView.frame = frame
-         imageView.tag = index
-         cell.scrollView.contentSize.width = cell.scrollView.frame.width * CGFloat(index + 1)
-         cell.scrollView.addSubview(imageView)
-         
-         let tapGestureRecognizer1 = UITapGestureRecognizer(target: self, action: #selector(PatientPrescriptionDetails.cellTappedMethod2(_:)))
-         imageView.isUserInteractionEnabled = true
-         imageView.addGestureRecognizer(tapGestureRecognizer1)
-         
-         }
-         
-         cell.btnLeftScroll.addTarget(self, action: #selector(leftButtonTapped), for: .touchUpInside)
-         cell.btnRightScroll.addTarget(self, action: #selector(rightButtonTapped), for: .touchUpInside)
-         
-         cell.scrollView.contentSize = CGSize(width: cell.scrollView.frame.size.width * CGFloat(self.arrPrescriptionTotalImages.count), height: cell.scrollView.frame.size.height)
-         cell.scrollView.delegate = self*/
+         return cell
+    }
+    
+    @objc func show_dob_picker(_ sender:UIButton) {
         
+        let btn:UIButton = sender
         
-        return cell
+        // print(btn.tag)
+        
+        // let int_value = self.arr_list_of_medical_questions[btn.tag]
+        
+        // print(int_value as Any)
+        
+        let indexPath = IndexPath.init(row: btn.tag, section: 0)
+        let cell = self.tablViw.cellForRow(at: indexPath) as! MedicalHistoryTableViewCell
+        
+        RPicker.selectDate(title: "Select Date", minDate: Date().dateByAddingYears(-60), maxDate: Date(), didSelectDate: {[] (selectedDate) in
+            // TODO: Your implementation for date
+            // self?..text = selectedDate.dateString("MMM-dd-YYYY")
+            
+              if indexPath.row == btn.tag {
+                 cell.txt_view_answer.text = selectedDate.dateString("yyyy-MM-dd")
+                 self.tablViw.reloadData()
+                 
+                  // self.save_new_dob_value = selectedDate.dateString("yyyy-MM-dd")
+            
+                  // print(self.save_new_dob_value as Any)
+                  
+              }
+            
+        })
+        
     }
     
     // MARK: - UPLOAD PICTURE -
@@ -1364,7 +2570,51 @@ extension MedicalHistoryVC:UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        return 1000
+        let item = self.arr_list_of_medical_questions[indexPath.row] as? [String:Any]
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            if person["role"] as! String == "Patient" {
+                
+                if (item!["answer"] as! String) == "" {
+                    return 0
+                } else {
+                    return UITableView.automaticDimension
+                }
+                
+            } else if person["role"] as! String == "Doctor" {
+                
+                if (item!["answer"] as! String) == "" {
+                    return 0
+                } else {
+                    return UITableView.automaticDimension
+                }
+                
+            } else if (person["role"] as! String) == "Lab" {
+                
+                if self.str_edit_patient == "no_edit" {
+                    
+                    if (item!["answer"] as! String) == "" {
+                        return 0
+                    } else {
+                        return UITableView.automaticDimension
+                    }
+                    
+                } else {
+                    
+                    return UITableView.automaticDimension
+                }
+                
+            } else {
+                return UITableView.automaticDimension
+            }
+        
+        } else {
+            
+            return 0
+        }
+        
+        
     }
     
     @objc func btnGenderPress() {
@@ -1531,4 +2781,35 @@ extension MedicalHistoryVC:UITableViewDataSource,UITableViewDelegate{
     }
     
     
+}
+
+extension UITableView {
+
+    func setBottomInset(to value: CGFloat) {
+        let edgeInset = UIEdgeInsets(top: 0, left: 0, bottom: value, right: 0)
+
+        self.contentInset = edgeInset
+        self.scrollIndicatorInsets = edgeInset
+    }
+}
+
+// MARK: - UITextViewDelegate -
+extension ViewController: UITextViewDelegate {
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+
+        if !textView.text!.isEmpty && textView.text! == "answer..." {
+            textView.text = ""
+            textView.textColor = UIColor.black
+        }
+        
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+    
+        if textView.text.isEmpty {
+            textView.text = "answer..."
+            textView.textColor = UIColor.lightGray
+        }
+    }
 }

@@ -9,9 +9,17 @@ import UIKit
 
 class manageInventoryTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var lblMedicineName:UILabel!
+    @IBOutlet weak var lblMedicineName:UILabel! {
+        didSet {
+            lblMedicineName.textColor = .black
+        }
+    }
     
-    @IBOutlet weak var lblMedicinePrice:UILabel!
+    @IBOutlet weak var lblMedicinePrice:UILabel! {
+        didSet {
+            lblMedicinePrice.textColor = .black
+        }
+    }
     
     @IBOutlet weak var imgMedicine:UIImageView! {
         didSet{
@@ -39,6 +47,8 @@ class manageInventoryTableViewCell: UITableViewCell {
         }
     }
 
+    @IBOutlet weak var btn_edit:UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         

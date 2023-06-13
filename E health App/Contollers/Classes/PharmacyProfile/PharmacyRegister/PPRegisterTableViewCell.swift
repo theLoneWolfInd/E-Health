@@ -93,7 +93,18 @@ class PPRegisterTableViewCell: UITableViewCell {
         
         didSet {
             
-            Utils.txtUitextField(textField: txtTiming, placeholderName: "Timing", setLeftPadding: 20 )
+            Utils.txtUitextField(textField: txtTiming, placeholderName: "Open Timing", setLeftPadding: 20 )
+        }
+    }
+    
+    @IBOutlet weak var btnOpenTime:UIButton!
+    @IBOutlet weak var btnCloseTime:UIButton!
+    
+    @IBOutlet weak var txt_close_Timing:UITextField!{
+        
+        didSet {
+            
+            Utils.txtUitextField(textField: txt_close_Timing, placeholderName: "Close Timing", setLeftPadding: 20 )
         }
     }
     
@@ -162,3 +173,4 @@ class PPRegisterTableViewCell: UITableViewCell {
     }
 
 }
+
